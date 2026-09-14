@@ -6,9 +6,13 @@ start the agents, and test one of them against six prompts.
 Read `usecase1.pdf` first: it tells you what the agents are and what you are
 looking for.
 
-Fill in `<YOUR_GOOGLE_ACCOUNT>` and `<YOUR_PROJECT_ID>` wherever they appear.
-Everything else pastes as written. You work in a terminal on **your VM**; the
-browser is the one on the VM too.
+Fill in `<YOUR_GOOGLE_ACCOUNT>`, `<YOUR_PROJECT_ID>` and `<REPO_URL>` wherever they
+appear. Everything else pastes as written. You work in a terminal on **your VM**;
+the browser is the one on the VM too.
+
+The code lives in this repository under `use case 01/AgentImplementation/`. The
+folder name has a space, so the commands below set one variable, `$KIT`, and use
+it everywhere.
 
 ---
 
@@ -60,17 +64,27 @@ on, then move on:
 gcloud services list --enabled --project=<YOUR_PROJECT_ID> | grep aiplatform
 ```
 
-### 5. Check the code is on the VM
+### 5. Get the repository and point at the kit
 
 ```bash
-ls ~/adlc-repo/day-01/agents
+cd ~
+git clone <REPO_URL> domainFDE
+```
+
+Already cloned? `cd ~/domainFDE && git pull` instead.
+
+Then set the variable every command below relies on, and make it stick for new
+terminals:
+
+```bash
+echo 'export KIT="$HOME/domainFDE/use case 01/AgentImplementation"' >> ~/.bashrc
+source ~/.bashrc
+ls "$KIT/agents"
 ```
 
 > **Expected:** `complaints_v1_baseline` and `returns_v1_baseline`.
 
-If the folder is missing, put your hand up. (The kit is normally pre-loaded. If
-you have been given a zip instead: `unzip -o ~/day1-learner.zip -d ~/adlc-repo`
-and check again.)
+If the folder is missing or the names differ, put your hand up.
 
 ### 6. Activate the ADK environment
 
@@ -96,10 +110,10 @@ Forgetting it is the usual cause of `adk: command not found`.
 ### 7. Run the setup check
 
 ```bash
-bash ~/adlc-repo/day-01/setup.sh
+bash "$KIT/setup.sh"
 ```
 
-It writes `agents/.env` (your project, region and model) and makes one real call to
+It writes `AgentImplementation/agents/.env` (your project, region and model) and makes one real call to
 the model, so any access problem shows up here rather than in the exercise.
 
 > **Expected:** `Model access ... OK` and `Setup finished.`
@@ -110,7 +124,7 @@ command that fixes it. Usually it is one of these:
 ```bash
 # you skipped the second login in step 2
 gcloud auth application-default login --no-launch-browser
-bash ~/adlc-repo/day-01/setup.sh
+bash "$KIT/setup.sh"
 
 # your account lacks the Vertex AI User role — hand up; the coach grants it
 gcloud projects add-iam-policy-binding <YOUR_PROJECT_ID> \
@@ -125,7 +139,7 @@ gcloud projects add-iam-policy-binding <YOUR_PROJECT_ID> \
 
 ```bash
 source ~/adk-env/bin/activate
-cd ~/adlc-repo/day-01/agents
+cd "$KIT/agents"
 adk web --reload_agents
 ```
 
@@ -233,7 +247,7 @@ They are in `usecase1.pdf` and at the end of `results.docx`. Write the answers
 down; you will be asked for them in the debrief.
 
 Prefer a terminal to the browser? In a second terminal:
-`source ~/adk-env/bin/activate && cd ~/adlc-repo/day-01/agents && adk run complaints_v1_baseline`
+`source ~/adk-env/bin/activate && cd "$KIT/agents" && adk run complaints_v1_baseline`
 
 ---
 
@@ -243,7 +257,7 @@ Stop with **Ctrl + C** in the server terminal. To come back later:
 
 ```bash
 source ~/adk-env/bin/activate
-cd ~/adlc-repo/day-01/agents
+cd "$KIT/agents"
 adk web --reload_agents
 ```
 
@@ -256,27 +270,33 @@ Put your hand up first. Do not spend the session fixing the environment.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `adk: command not found` | Environment not active in this terminal | `source ~/adk-env/bin/activate` |
-| Empty drop-down on the chat page | Server started from the wrong folder | `Ctrl + C`, `cd ~/adlc-repo/day-01/agents`, start again |
-| `PERMISSION_DENIED` / `403` in the reply | Identity cannot call Vertex AI | `bash ~/adlc-repo/day-01/setup.sh` and follow what it prints |
+| Empty drop-down on the chat page | Server started from the wrong folder | `Ctrl + C`, `cd "$KIT/agents"`, start again |
+| `PERMISSION_DENIED` / `403` in the reply | Identity cannot call Vertex AI | `bash "$KIT/setup.sh"` and follow what it prints |
 | `SERVICE_DISABLED` | Vertex AI API is off | Step 4 |
 | Login prompt loops or `(unset)` project | Step 3 not done in this terminal | `gcloud config list`, then step 3 |
+| `$KIT: unbound` or `No such file` | Variable not set in this terminal | `source ~/.bashrc`, or repeat the `export` line in step 5 |
 | Port 8000 already in use | Old server still running | `Ctrl + C` in the old terminal, or `adk web --port 8001 --reload_agents` |
 | Different answer on the second run | Normal; models vary | Note it under "Run it twice" in `results.docx` |
 
 ---
 
-## Files in this folder
+## Files in this repository
 
-| File | What it is |
-|---|---|
-| `usecase1.pdf` | The brief, the task and your seven questions |
-| `README.md` | This page |
-| `ARCHITECTURE.md` | How the application is built and how one message flows through it |
-| `results.docx` | Your score sheet — fill it in as you go |
-| `agents/complaints_v1_baseline/` | The CXM agent: `instruction.txt`, `tools.py`, `agent.py` |
-| `agents/returns_v1_baseline/` | The SCM agent, same three files |
-| `agents/.env.example` | Settings template; `setup.sh` writes the real `.env` |
-| `setup.sh` | Environment check and settings writer |
+```
+domainFDE/
+├── README.md                          Repository overview
+└── use case 01/
+    ├── README.md                      This page
+    ├── usecase1.pdf                   The brief, the task and your seven questions
+    ├── ARCHITECTURE.md                How the application is built and how one message flows
+    ├── results.docx                   Your score sheet — fill it in as you go
+    └── AgentImplementation/           $KIT
+        ├── setup.sh                   Environment check; writes agents/.env
+        └── agents/                    Start adk web from here
+            ├── .env.example           Settings template
+            ├── complaints_v1_baseline/  CXM agent: instruction.txt, tools.py, agent.py
+            └── returns_v1_baseline/     SCM agent, same three files
+```
 
 Do not change the code or the instruction during the exercise. You are
 diagnosing, not fixing.

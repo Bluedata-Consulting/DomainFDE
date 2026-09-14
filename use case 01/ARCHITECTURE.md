@@ -221,24 +221,25 @@ role. This is the single most common cause of a denied message on Day 1.
 ## 7. Folder layout
 
 ```
-learner-repo/day-01/
-├── agents/                         Start adk web from here
-│   ├── .env.example                Settings template with placeholders
-│   ├── .env                        Written by setup.sh, not committed
-│   ├── complaints_v1_baseline/
-│   │   ├── __init__.py             Makes the folder discoverable by ADK
-│   │   ├── agent.py                Wiring: instruction + tools + model
-│   │   ├── instruction.txt         What the agent is told
-│   │   └── tools.py                What the agent can do, plus fixture data
-│   └── returns_v1_baseline/        Same four files, SCM domain
+use case 01/
 ├── usecase1.pdf                    The brief and your questions
 ├── README.md                       Setup, run and the test prompts
 ├── ARCHITECTURE.md                 This document
 ├── results.docx                    Score sheet
-└── setup.sh                        Lab check and settings writer
+└── AgentImplementation/
+    ├── setup.sh                    Lab check and settings writer
+    └── agents/                     Start adk web from here
+        ├── .env.example            Settings template with placeholders
+        ├── .env                    Written by setup.sh, not committed
+        ├── complaints_v1_baseline/
+        │   ├── __init__.py         Makes the folder discoverable by ADK
+        │   ├── agent.py            Wiring: instruction + tools + model
+        │   ├── instruction.txt     What the agent is told
+        │   └── tools.py            What the agent can do, plus fixture data
+        └── returns_v1_baseline/    Same four files, SCM domain
 ```
 
 ADK discovers agents by scanning the folder it is started from. Any subfolder with
 an `__init__.py` that imports a module defining `root_agent` appears in the
-drop-down. That is why Step 8 in the README starts from `agents/`, and why starting
+drop-down. That is why Step 8 in the README starts from `AgentImplementation/agents/`, and why starting
 from the wrong folder shows an empty drop-down.
