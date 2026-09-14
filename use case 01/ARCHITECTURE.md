@@ -1,8 +1,7 @@
 # Architecture of the Day 1 practice application
 
 This document describes how the practice application is put together: the pieces,
-how a single message flows through them, what is real and what is simulated, and
-where the ADLC controls will attach later in the programme.
+how a single message flows through them, and what is real and what is simulated.
 
 Read [`README.md`](README.md) first if you have not run the agents yet.
 
@@ -18,6 +17,8 @@ agent is told), a tools file (what the agent can do), and a small wiring file
 happens in Gemini, called through Vertex AI in your own Google Cloud project. The
 business data is a Python dictionary inside the process, so nothing outside the
 process is ever changed.
+
+---
 
 ---
 
@@ -60,6 +61,8 @@ Who and what is involved, and where the boundaries sit.
 
 ---
 
+---
+
 ## 3. Runtime component view
 
 ```
@@ -94,12 +97,14 @@ Who and what is involved, and where the boundaries sit.
 
 | Component | File | Responsibility | Who changes it |
 |---|---|---|---|
-| Instruction | `instruction.txt` | The wording of the decision: goal, limits, tone. Re-read before every reply, so edits apply with no restart. | The team that owns the decision |
+| Instruction | `instruction.txt` | The wording of the decision: goal, limits, tone. Re-read before every reply. | The team that owns the decision |
 | Tools | `tools.py` | The set of actions that exist at all, plus the practice data. A tool the agent does not have cannot be called, whatever the prompt says. | Engineering, with the risk owner |
 | Wiring | `agent.py` | Joins one instruction, one tool list and one model into a `root_agent`. Sets temperature to 0 so runs are as repeatable as a model allows. | Engineering |
 | Package marker | `__init__.py` | Makes the folder importable, so ADK discovers the agent. | Nobody, after setup |
 | Settings | `.env` | Project, region and model. Written by `setup.sh`, never committed. | `setup.sh` |
-| Action log | stdout | Every action the agent takes prints `>>> ACTION TAKEN BY AGENT`. This is the only audit trail that exists today. | Nobody |
+| Action log | stdout | Every action the agent takes prints `>>> ACTION TAKEN BY AGENT`. | Nobody |
+
+---
 
 ---
 
@@ -160,11 +165,6 @@ sequenceDiagram
     A-->>U: reply + tool call boxes
 ```
 
-**The point to notice at step 5.** Nothing between the model deciding to refund and
-the refund happening. No policy check, no value threshold, no approval, no record
-of who authorised it. The gap between step 5 and step 6 is exactly where the ADLC
-controls will go.
-
 ---
 
 ## 5. Data
@@ -172,18 +172,12 @@ controls will go.
 All data is held in Python dictionaries inside `tools.py` and disappears when the
 process stops. There is no database and no network call other than to Vertex AI.
 
-| Agent | Fixture | Records | Why they exist |
+| Agent | Fixture | Records | Decisive fields |
 |---|---|---|---|
-| CXM | `COMPLAINTS` | C-101 to C-104 | Each record carries a field that should change the decision: `order_value_gbp`, `previous_contacts`, `vulnerable_customer`, `opted_out_channels` |
-| SCM | `RETURNS` | R-201 to R-204 | Same idea: `item_value_gbp`, `on_recall_list`, `condition_grade`, `vendor_return_deadline` |
-
-Those fields are the trap. The data contains everything needed to make the right
-call. The agent still gets it wrong, because nothing tells it that a recall flag
-outranks a colleague asking for a restock.
+| CXM | `COMPLAINTS` | C-101 to C-104 | Fields: `order_value_gbp`, `previous_contacts`, `vulnerable_customer`, `opted_out_channels` |
+| SCM | `RETURNS` | R-201 to R-204 | Fields: `item_value_gbp`, `on_recall_list`, `condition_grade`, `vendor_return_deadline` |
 
 One tool, `update_return_record`, writes back into the fixture during a session.
-That is deliberate: it lets you watch an agent rewrite an inspector's grade on
-request and then act on its own edit.
 
 ---
 
@@ -222,95 +216,9 @@ role. This is the single most common cause of a denied message on Day 1.
 
 ---
 
-## 7. What is deliberately absent
-
-The application is a teaching baseline, so the following are missing by design.
-Each one maps to a day of the programme.
-
-| Absent | What that means in the code | Fixed on |
-|---|---|---|
-| A defined decision | `instruction.txt` says "resolve complaints quickly" and nothing about scope | Day 1 |
-| Autonomy levels | Every tool in `agent.py` acts alone; a refund is as easy to call as a lookup | Day 1 |
-| Forbidden actions | Nothing anywhere says "never" | Day 1 |
-| A human boundary | There is no escalation tool and no named owner | Day 1 |
-| Test cases | The five prompts in `prompts.md` are a seed, not a suite | Day 1 |
-| Separable decision logic | The rules live in prose, so they cannot be unit tested | Day 2 |
-| An objective and limits | Nothing defines what a good outcome is, or what may not be traded away for it | Day 3 |
-| Tool contracts | Docstrings are one line each, so the model guesses when each tool applies | Day 4 |
-| An eval set and baseline | No score exists, so no change can be shown to be an improvement | Day 5 |
-| Grounding | P5 has no policy source to read, so the model invents a number | Day 6 |
-| Versioning, tracing, rollback | Edit the file and the behaviour changes; no version, no trace, no way back | Day 7 |
-| Approval gate and audit trail | A `print` to the terminal is the only record | Day 9 |
-
 ---
 
-## 8. Where the controls will attach
-
-The same flow, with the control points marked. Nothing below is implemented yet;
-this is the target the programme builds towards.
-
-```
-  message
-     |
-     v
-  [ POLICY IN CONTEXT ]  grounded policy and data, so answers are sourced   (Day 6)
-     |
-     v
-  model proposes an action
-     |
-     v
-  [ AUTONOMY CHECK ]     is this sub-decision L0 to L4? value thresholds,
-     |                   recall flags, vulnerability flags                  (Day 1, 2)
-     v
-  [ MUST-NEVER GATE ]    enforced in code, not requested in prose           (Day 2)
-     |
-     v
-  [ APPROVAL GATE ]      propose_* tool, human approves, then the act       (Day 9)
-     |
-     v
-  tool executes
-     |
-     v
-  [ AUDIT TRAIL ]        who, what, why, on whose authority, reversible?    (Day 9)
-     |
-     v
-  [ TRACE AND EVAL ]     scored against the eval set, versioned, revertible (Day 5, 7)
-```
-
-**The distinction that matters most.** A rule written in `instruction.txt` is a
-*request*: a forceful or clever prompt can talk past it. A tool that is not in the
-agent's tool list is *enforcement*: the agent cannot call what it does not have.
-Most of the programme is about moving rules from the first column to the second.
-
----
-
-## 9. Design decisions and why
-
-| Decision | Why | What it costs |
-|---|---|---|
-| One process, no database | Nothing external can be damaged; the lab resets by restarting | The data is not shared between learners |
-| Instruction in a text file, read per reply | Learners can change wording and see the effect with no restart | It also makes the wording easy to change with no review, which is itself a lesson |
-| Tools as plain Python functions | The tool list is readable in ten seconds, and switching a tool off is one line | No real integration experience on Day 1 |
-| `temperature=0` | Makes runs as repeatable as a model allows, so a failure can be shown twice | Removes some variety; the model still varies between runs |
-| Actions print to stdout | The terminal becomes a visible action log next to the chat | It is a print statement, not an audit trail, which is the point |
-| Fixtures carry decisive fields | Proves the failure is about missing framing, not missing data | Learners may assume real systems are this clean |
-| Vertex AI rather than an API key | Matches how the agent would be deployed in an enterprise: project, IAM, billing | Setup needs a project and a role, which is where most problems appear |
-
----
-
-## 10. Deployment shape today, and later
-
-| | Day 1 (this kit) | Later in the programme |
-|---|---|---|
-| Where it runs | Cloud Shell or a provided VM, one process, started by hand | Vertex AI Agent Engine, managed and versioned |
-| Who can reach it | Only you, through the browser on the same machine | A service with authentication and quotas |
-| Data | Python dictionaries in memory | BigQuery datasets for SCM and CXM |
-| Record of what happened | Lines printed in a terminal | Traces, evals and an audit trail |
-| Release | Save the file | Versioned, scored against an eval set, revertible |
-
----
-
-## 11. Folder layout
+## 7. Folder layout
 
 ```
 learner-repo/day-01/
@@ -323,17 +231,14 @@ learner-repo/day-01/
 │   │   ├── instruction.txt         What the agent is told
 │   │   └── tools.py                What the agent can do, plus fixture data
 │   └── returns_v1_baseline/        Same four files, SCM domain
-├── HANDS-ON.md                     The classroom activity
-├── prompts.md                      Five test prompts per domain
-├── results.md                      Score sheet
-├── gap-map.md                      Missing pieces, mapped to ADLC days
-├── decision-card.md                Framing the decision
-├── improvement-proposal.md         Your requirement and your improvements
-├── improvement-proposal-EXAMPLE.md A worked example
+├── usecase1.pdf                    The brief and your questions
+├── README.md                       Setup, run and the test prompts
+├── ARCHITECTURE.md                 This document
+├── results.docx                    Score sheet
 └── setup.sh                        Lab check and settings writer
 ```
 
 ADK discovers agents by scanning the folder it is started from. Any subfolder with
 an `__init__.py` that imports a module defining `root_agent` appears in the
-drop-down. That is why Step 7 in the README starts from `agents/`, and why starting
+drop-down. That is why Step 8 in the README starts from `agents/`, and why starting
 from the wrong folder shows an empty drop-down.
