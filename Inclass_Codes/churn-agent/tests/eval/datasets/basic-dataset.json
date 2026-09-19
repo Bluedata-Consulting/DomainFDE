@@ -1,0 +1,90 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "premium_offer_high_churn_high_clv",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What offer should we give C1001?"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1001: PREMIUM_OFFER — Churn score 82% exceeds 70% and CLV segment is High."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "standard_offer_high_churn_medium_clv",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "C1005"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1005: STANDARD_OFFER — Churn score 91% exceeds 70% and CLV segment is Medium."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "no_action_low_churn",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Should we send anything to C1002?"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1002: NO_ACTION — Churn score 14% is below the 30% threshold."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "unknown_customer_id",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "check customer C9999"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C9999: REVIEW — No customer record found for 'C9999'."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "missing_customer_id",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "hi"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Please include a customer id (for example C1001) and I'll recommend the most relevant offer."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "reviewer_mid_churn_low_clv",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What is the best offer for C1003?"}]
+      }
+    },
+    {
+      "eval_case_id": "reviewer_high_churn_low_clv",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Recommend an offer for C1008."}]
+      }
+    },
+    {
+      "eval_case_id": "reviewer_mid_churn_high_clv",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "C1010 - what should we do?"}]
+      }
+    }
+  ]
+}

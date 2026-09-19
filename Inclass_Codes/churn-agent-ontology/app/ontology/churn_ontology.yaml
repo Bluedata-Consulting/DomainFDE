@@ -1,0 +1,183 @@
+# The retail-churn ontology (TBox).
+#
+# This file is the single declarative source for the agent's vocabulary:
+# concepts, the properties over them, the thresholds that tie a raw number to a
+# concept, and the text cues that ground free-form interactions into the
+# taxonomy. `loader.py` turns it into an Ontology; `churn_ontology.py` exposes
+# each name as a module constant (HighValueSegment -> HIGH_VALUE_SEGMENT,
+# hasChurnScore -> HAS_CHURN_SCORE).
+#
+# Per-concept keys:
+#   comment     human-readable gloss; may interpolate any threshold, e.g.
+#               "{CHURN_LOW_THRESHOLD:.0%}"
+#   children    nested subconcepts
+#   individual  IRI of this concept's one canonical individual
+#   matches     raw `clv_segment` label this segment concept stands for
+#   outcome     DecisionOutcome name this retention action maps to
+#   cues        substrings that ground free text into this concept
+#   priority    cue-matching order; lowest wins, so the most diagnostic
+#               concept is tried first
+
+name: retail-churn
+description: Retention decisions for retail customers at risk of churning.
+
+# --- thresholds: the bridge between raw measurements and concepts ------------
+thresholds:
+  CHURN_LOW_THRESHOLD: 0.30
+  CHURN_HIGH_THRESHOLD: 0.70
+  # A customer incentivised more recently than this is suffering offer fatigue:
+  # another offer this soon cannibalises margin rather than changing behaviour.
+  OFFER_FATIGUE_DAYS: 30
+  # How many negative interactions must outweigh positive ones before a
+  # customer counts as disengaged rather than merely unenthusiastic.
+  DISENGAGEMENT_MARGIN: 2
+
+concepts:
+  Customer:
+    comment: A retail customer the agent may act on.
+    children:
+      EngagedCustomer:
+        comment: Recent interactions are predominantly positive.
+      DisengagedCustomer:
+        comment: Negative and hesitation signals clearly outweigh positive ones.
+      AttritionRiskCustomer:
+        comment: Has shown an explicit intent-to-leave signal.
+      RecentlyIncentivisedCustomer:
+        comment: Was given an offer within the last {OFFER_FATIGUE_DAYS} days.
+
+  ValueSegment:
+    comment: Customer lifetime-value band.
+    children:
+      HighValueSegment: {individual: "segment:high", matches: high}
+      MediumValueSegment: {individual: "segment:medium", matches: medium}
+      LowValueSegment: {individual: "segment:low", matches: low}
+
+  RiskBand:
+    comment: Churn-risk band derived from the churn score.
+    children:
+      LowRiskBand:
+        individual: "band:low"
+        comment: Churn score below {CHURN_LOW_THRESHOLD:.0%}.
+      ModerateRiskBand:
+        individual: "band:moderate"
+        comment: >-
+          Churn score between {CHURN_LOW_THRESHOLD:.0%} and
+          {CHURN_HIGH_THRESHOLD:.0%}.
+      HighRiskBand:
+        individual: "band:high"
+        comment: Churn score above {CHURN_HIGH_THRESHOLD:.0%}.
+
+  Interaction:
+    comment: One observed customer behaviour.
+    children:
+      PositiveInteraction:
+        children:
+          LoyaltyInteraction:
+            priority: 70
+            cues: [loyalty, membership, vip, early-access, tier upgrade,
+                   subscribed to, signed up for]
+          AdvocacyInteraction:
+            comment: Reviews, referrals, positive feedback.
+            priority: 80
+            cues: [review, referr, referred, feedback, rated, star, recommend]
+          PromotionRedemptionInteraction:
+            priority: 90
+            cues: [coupon, discount, promo code, redeemed, voucher]
+          PurchaseInteraction:
+            priority: 100
+            cues: [purchased, placed an order, bought, buy-online-pickup, "order ("]
+
+      NegativeInteraction:
+        children:
+          AttritionSignalInteraction:
+            comment: >-
+              Explicit intent to leave: unsubscribing, account deletion,
+              downgrades.
+            priority: 10
+            cues: [unsubscrib, account deletion, delete account, cancel,
+                   downgrad, opted out]
+          ComplaintInteraction:
+            priority: 20
+            cues: [complaint, complained, late delivery, escalat, dispute,
+                   discrepancy]
+          CompetitorInterestInteraction:
+            priority: 30
+            cues: [competitor, compared prices, price match, rival]
+          DisengagementInteraction:
+            comment: "Going quiet: unopened mail, no logins, ignored re-engagement."
+            priority: 40
+            cues: [no app login, no logins, ignored, did not click, did not open,
+                   unopened, inactiv, lapsed]
+          PurchaseHesitationInteraction:
+            comment: >-
+              Intent without conversion: abandoned carts, browsing without
+              buying.
+            priority: 50
+            cues: [abandoned cart, cart abandoned, abandoned, did not purchase,
+                   no purchase, did not checkout, removed from cart]
+          ReturnInteraction:
+            comment: Returns, exchanges, defective goods.
+            priority: 60
+            cues: [returned, "return ", exchanged, defective, refund]
+
+      NeutralInteraction:
+        comment: Observed but not diagnostic on its own.
+        children:
+          ServiceInteraction:
+            priority: 110
+            cues: [contacted support, customer service, chatbot, help centre,
+                   "chat "]
+          BrowsingInteraction:
+            priority: 120
+            cues: [browsed, viewed, wishlist, added items, searched]
+
+  RetentionAction:
+    comment: An action the agent may recommend.
+    children:
+      NoAction:
+        individual: "action:no_action"
+        outcome: NO_ACTION
+        comment: No intervention right now.
+      StandardOffer:
+        individual: "action:standard_offer"
+        outcome: STANDARD_OFFER
+        comment: A standard retention offer.
+      PremiumOffer:
+        individual: "action:premium_offer"
+        outcome: PREMIUM_OFFER
+        comment: A high-cost retention offer, reserved for high-value customers.
+      HumanReview:
+        individual: "action:human_review"
+        outcome: REVIEW
+        comment: Escalate to a human.
+
+properties:
+  hasChurnScore:
+    domain: Customer
+    range: float
+    comment: Modelled probability of churn, in [0, 1].
+  daysSinceLastOffer: {domain: Customer, range: int}
+  positiveSignalCount: {domain: Customer, range: int}
+  negativeSignalCount: {domain: Customer, range: int}
+  hasValueSegment: {domain: Customer, range: ValueSegment, kind: object}
+  hasRiskBand: {domain: Customer, range: RiskBand, kind: object}
+  hadInteraction:
+    domain: Customer
+    range: Interaction
+    kind: object
+    functional: false
+  eligibleFor:
+    domain: Customer
+    range: RetentionAction
+    kind: object
+    functional: false
+    comment: Actions whose eligibility constraints this customer satisfies.
+  recommendedAction:
+    domain: Customer
+    range: RetentionAction
+    kind: object
+    comment: The single action the deterministic rules settled on, if any.
+  describedAs:
+    domain: Interaction
+    range: str
+    comment: The raw source text this interaction was classified from.
