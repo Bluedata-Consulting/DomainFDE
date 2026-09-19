@@ -1,0 +1,110 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "premium_offer_high_risk_high_value",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What offer should we give C1001?"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1001: PREMIUM_OFFER — Churn score 82% places C1001 in HighRiskBand with HighValueSegment; PremiumOffer satisfies its eligibility constraints. The answer also lists the ontology inference chain, including the AttritionSignalInteraction from the unsubscribe and the PremiumOfferEligibility step."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "standard_offer_high_risk_medium_value",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "C1005"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1005: STANDARD_OFFER — Churn score 91% places C1005 in HighRiskBand with MediumValueSegment; StandardOffer satisfies its eligibility constraints. PremiumOffer is not among the eligible actions, because it requires the HighValueSegment."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "no_action_low_risk",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Should we send anything to C1002?"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1002: NO_ACTION — Churn score 14% places C1002 in LowRiskBand with MediumValueSegment; NoAction satisfies its eligibility constraints. C1002 is also a RecentlyIncentivisedCustomer and an EngagedCustomer, and no offer is eligible."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "offer_fatigue_suppresses_offers",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Is C1009 worth an offer right now?"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C1009: NO_ACTION — Churn score 9% places C1009 in LowRiskBand with LowValueSegment; NoAction satisfies its eligibility constraints. The eligible actions are only NoAction and HumanReview, since C1009 is a RecentlyIncentivisedCustomer (last offer 8 days ago)."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "unknown_customer_id",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "check customer C9999"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Customer C9999: REVIEW — No customer record found for 'C9999'."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "missing_customer_id",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "hi"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "Please include a customer id (for example C1001) and I'll recommend the most relevant offer."}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "reviewer_moderate_risk_low_value",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What is the best offer for C1003?"}]
+      }
+    },
+    {
+      "eval_case_id": "reviewer_moderate_risk_medium_value",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Recommend an offer for C1008."}]
+      }
+    },
+    {
+      "eval_case_id": "reviewer_disengaged_high_value_premium_eligible",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "C1010 - what should we do?"}]
+      }
+    },
+    {
+      "eval_case_id": "reviewer_mixed_signals_low_value",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Anything we should do for C1006?"}]
+      }
+    }
+  ]
+}
