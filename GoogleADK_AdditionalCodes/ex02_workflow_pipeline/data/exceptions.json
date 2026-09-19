@@ -1,0 +1,113 @@
+[
+  {
+    "case_id": "EXC-7701",
+    "as_of_date": "2026-02-11",
+    "order": {
+      "order_id": "AUR-88213",
+      "customer_name": "Meera Krishnan",
+      "customer_city": "Mumbai",
+      "city_tier": "metro",
+      "order_value_inr": 3240.0,
+      "promised_delivery_date": "2026-02-04",
+      "lines": [
+        {"sku": "AUR-DIFF-CER-01", "description": "Ceramic oil diffuser", "qty": 1, "value_inr": 2490.0},
+        {"sku": "AUR-OIL-LAV-100", "description": "Lavender essential oil 100ml", "qty": 1, "value_inr": 750.0}
+      ],
+      "orders_last_12_months": 14,
+      "lifetime_value_inr": 61200.0,
+      "prior_service_failures_90d": 1
+    },
+    "logistics_event": {
+      "carrier": "BlueDart",
+      "last_scan": "2026-02-05T18:20:00+05:30",
+      "last_scan_location": "Bhiwandi Hub",
+      "last_scan_status": "In transit",
+      "proof_of_delivery": null,
+      "photographs": []
+    },
+    "customer_statement": "Still hasn't arrived, tracking hasn't moved in six days. Second time this has happened. Either get it to me this week or refund it."
+  },
+  {
+    "case_id": "EXC-7702",
+    "as_of_date": "2026-02-11",
+    "order": {
+      "order_id": "AUR-90455",
+      "customer_name": "Arvind Rao",
+      "customer_city": "Coimbatore",
+      "city_tier": "non_metro",
+      "order_value_inr": 1860.0,
+      "promised_delivery_date": "2026-02-10",
+      "lines": [
+        {"sku": "AUR-HW-NEEM-500", "description": "Neem hand wash 500ml", "qty": 2, "value_inr": 960.0},
+        {"sku": "AUR-OIL-LEM-100", "description": "Lemongrass essential oil 100ml", "qty": 1, "value_inr": 900.0}
+      ],
+      "orders_last_12_months": 6,
+      "lifetime_value_inr": 9400.0,
+      "prior_service_failures_90d": 0
+    },
+    "logistics_event": {
+      "carrier": "Delhivery",
+      "last_scan": "2026-02-10T19:05:00+05:30",
+      "last_scan_location": "Coimbatore",
+      "last_scan_status": "Delivered",
+      "proof_of_delivery": "signature_captured",
+      "photographs": ["dmg_7702_a.jpg", "dmg_7702_b.jpg"]
+    },
+    "customer_statement": "Hand wash bottle arrived cracked and leaked over everything in the box. The oil bottle label is destroyed. Photos attached, delivered yesterday evening. Want the whole order replaced."
+  },
+  {
+    "case_id": "EXC-7703",
+    "as_of_date": "2026-02-11",
+    "order": {
+      "order_id": "AUR-91002",
+      "customer_name": "Siti Rahman",
+      "customer_city": "Kuala Lumpur",
+      "city_tier": "metro",
+      "order_value_inr": 2760.0,
+      "promised_delivery_date": "2026-02-09",
+      "lines": [
+        {"sku": "AUR-GIFT-FEST-03", "description": "Festive gift set", "qty": 1, "value_inr": 2760.0}
+      ],
+      "orders_last_12_months": 2,
+      "lifetime_value_inr": 4100.0,
+      "prior_service_failures_90d": 0
+    },
+    "logistics_event": {
+      "carrier": "Pos Laju",
+      "last_scan": "2026-02-09T14:12:00+08:00",
+      "last_scan_location": "KL Sentral Sorting",
+      "last_scan_status": "Returned to origin - address incomplete",
+      "proof_of_delivery": null,
+      "photographs": []
+    },
+    "customer_statement": "Package never came, says returned to sender. I gave the full address. I needed this as a gift and the occasion has passed."
+  },
+  {
+    "case_id": "EXC-7704",
+    "as_of_date": "2026-02-11",
+    "order": {
+      "order_id": "AUR-89870",
+      "customer_name": "Priya Nair",
+      "customer_city": "Kochi",
+      "city_tier": "non_metro",
+      "order_value_inr": 1120.0,
+      "promised_delivery_date": "2026-02-06",
+      "lines": [
+        {"sku": "AUR-SCRUB-CHAR-200", "description": "Activated charcoal scrub 200g", "qty": 1, "value_inr": 620.0},
+        {"sku": "AUR-HW-NEEM-500", "description": "Neem hand wash 500ml", "qty": 1, "value_inr": 500.0}
+      ],
+      "orders_last_12_months": 9,
+      "lifetime_value_inr": 21800.0,
+      "prior_service_failures_90d": 0
+    },
+    "logistics_event": {
+      "carrier": "Delhivery",
+      "last_scan": "2026-02-06T11:40:00+05:30",
+      "last_scan_location": "Kochi",
+      "last_scan_status": "Delivered",
+      "proof_of_delivery": "signature_captured",
+      "photographs": []
+    },
+    "customer_statement": "Used the charcoal scrub and had a reaction, saw a doctor for hives. I want to know the ingredients and I want this escalated. I have posted about it publicly."
+  }
+]

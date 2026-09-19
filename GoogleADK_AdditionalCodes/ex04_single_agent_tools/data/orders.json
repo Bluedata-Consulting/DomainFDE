@@ -1,0 +1,85 @@
+{
+  "AUR-88213": {
+    "order_id": "AUR-88213",
+    "customer_name": "Meera Krishnan",
+    "customer_email": "meera.k@example.com",
+    "customer_segment": "platinum",
+    "order_date": "2026-02-02",
+    "promised_date": "2026-02-04",
+    "delivered_date": null,
+    "status": "in_transit",
+    "city": "Mumbai",
+    "city_tier": "metro",
+    "order_value_inr": 3240.0,
+    "payment_method": "upi",
+    "carrier": "BlueDart",
+    "last_scan": "2026-02-05T18:20:00+05:30",
+    "last_scan_location": "Bhiwandi Hub",
+    "lines": [
+      {"sku": "AUR-DIFF-CER-01", "description": "Ceramic oil diffuser", "qty": 1, "value_inr": 2490.0},
+      {"sku": "AUR-OIL-LAV-100", "description": "Lavender essential oil 100ml", "qty": 1, "value_inr": 750.0}
+    ]
+  },
+  "AUR-90455": {
+    "order_id": "AUR-90455",
+    "customer_name": "Arvind Rao",
+    "customer_email": "arvind.rao@example.com",
+    "customer_segment": "gold",
+    "order_date": "2026-02-06",
+    "promised_date": "2026-02-10",
+    "delivered_date": "2026-02-10",
+    "status": "delivered",
+    "city": "Coimbatore",
+    "city_tier": "non_metro",
+    "order_value_inr": 1860.0,
+    "payment_method": "card",
+    "carrier": "Delhivery",
+    "last_scan": "2026-02-10T19:05:00+05:30",
+    "last_scan_location": "Coimbatore",
+    "lines": [
+      {"sku": "AUR-HW-NEEM-500", "description": "Neem hand wash 500ml", "qty": 2, "value_inr": 960.0},
+      {"sku": "AUR-OIL-LEM-100", "description": "Lemongrass essential oil 100ml", "qty": 1, "value_inr": 900.0}
+    ]
+  },
+  "AUR-91002": {
+    "order_id": "AUR-91002",
+    "customer_name": "Siti Rahman",
+    "customer_email": "siti.r@example.com",
+    "customer_segment": "standard",
+    "order_date": "2026-01-03",
+    "promised_date": "2026-01-09",
+    "delivered_date": "2026-01-08",
+    "status": "delivered",
+    "city": "Kuala Lumpur",
+    "city_tier": "metro",
+    "order_value_inr": 2760.0,
+    "payment_method": "fpx",
+    "carrier": "Pos Laju",
+    "last_scan": "2026-01-08T14:12:00+08:00",
+    "last_scan_location": "Kuala Lumpur",
+    "lines": [
+      {"sku": "AUR-GIFT-FEST-03", "description": "Festive gift set", "qty": 1, "value_inr": 2760.0}
+    ]
+  },
+  "AUR-89870": {
+    "order_id": "AUR-89870",
+    "customer_name": "Priya Nair",
+    "customer_email": "priya.nair@example.com",
+    "customer_segment": "gold",
+    "order_date": "2026-02-03",
+    "promised_date": "2026-02-06",
+    "delivered_date": "2026-02-06",
+    "status": "delivered",
+    "city": "Kochi",
+    "city_tier": "non_metro",
+    "order_value_inr": 1120.0,
+    "payment_method": "card",
+    "carrier": "Delhivery",
+    "last_scan": "2026-02-06T11:40:00+05:30",
+    "last_scan_location": "Kochi",
+    "lines": [
+      {"sku": "AUR-SCRUB-CHAR-200", "description": "Activated charcoal scrub 200g", "qty": 1, "value_inr": 620.0},
+      {"sku": "AUR-HW-NEEM-500", "description": "Neem hand wash 500ml", "qty": 1, "value_inr": 500.0}
+    ]
+  }
+}

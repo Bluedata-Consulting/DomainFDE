@@ -1,0 +1,64 @@
+{
+  "as_of_date": "2026-02-11",
+  "shipments": [
+    {
+      "shipment_id": "PO-55210",
+      "sku": "AUR-DIFF-CER-01",
+      "supplier_id": "SUP-CERAM-04",
+      "units": 900,
+      "mode": "sea",
+      "origin": "Jingdezhen, CN",
+      "destination": "DC-BHIWANDI",
+      "contracted_eta": "2026-02-20",
+      "current_eta": "2026-03-06",
+      "status": "delayed_at_port",
+      "delay_reason": "Customs inspection hold at Nhava Sheva, documentation query on HS code"
+    },
+    {
+      "shipment_id": "PO-55318",
+      "sku": "AUR-HW-NEEM-500",
+      "supplier_id": "SUP-PCARE-01",
+      "units": 6000,
+      "mode": "road",
+      "origin": "Baddi, HP",
+      "destination": "DC-BHIWANDI",
+      "contracted_eta": "2026-02-15",
+      "current_eta": "2026-02-15",
+      "status": "in_transit",
+      "delay_reason": null
+    }
+  ],
+  "suppliers": {
+    "SUP-CERAM-04": {
+      "name": "Jingdezhen Ceramics Works",
+      "category": "ceramics and glassware",
+      "contracted_lead_time_days": 35,
+      "actual_lead_time_last_3_orders_days": [38, 44, 51],
+      "on_time_delivery_rate_12m": 0.58,
+      "air_freight_available": true,
+      "air_freight_lead_time_days": 7,
+      "air_freight_premium_per_unit_inr": 310.0,
+      "notes": "Two lead-time breaches beyond 5 days in the last 12 months. Under service review."
+    },
+    "SUP-PCARE-01": {
+      "name": "Baddi Personal Care Pvt Ltd",
+      "category": "personal care",
+      "contracted_lead_time_days": 9,
+      "actual_lead_time_last_3_orders_days": [9, 8, 10],
+      "on_time_delivery_rate_12m": 0.96,
+      "air_freight_available": false,
+      "notes": "Reliable. Primary supplier for staple lines."
+    },
+    "SUP-FRAG-09": {
+      "name": "Grasse Fragrance Imports",
+      "category": "imported fragrance components",
+      "contracted_lead_time_days": 21,
+      "actual_lead_time_last_3_orders_days": [22, 20, 23],
+      "on_time_delivery_rate_12m": 0.89,
+      "air_freight_available": true,
+      "air_freight_lead_time_days": 9,
+      "air_freight_premium_per_unit_inr": 95.0,
+      "notes": "Consistent. Minimum order quantity 500 units per SKU."
+    }
+  }
+}

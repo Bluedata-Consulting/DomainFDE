@@ -1,0 +1,73 @@
+{
+  "as_of_date": "2026-02-11",
+  "skus": {
+    "AUR-DIFF-CER-01": {
+      "description": "Ceramic oil diffuser",
+      "class": "A",
+      "units_per_day_8wk_avg": 41.5,
+      "units_per_day_last_7d": 68.0,
+      "trend": "accelerating",
+      "seasonality_note": "Gifting line. Historically 2.4x baseline in the four weeks before Deepavali and 1.9x before Hari Raya.",
+      "forecast_next_30d_units": 2040
+    },
+    "AUR-HW-NEEM-500": {
+      "description": "Neem hand wash 500ml",
+      "class": "A",
+      "units_per_day_8wk_avg": 310.0,
+      "units_per_day_last_7d": 298.0,
+      "trend": "flat",
+      "seasonality_note": "Staple line, minimal seasonality.",
+      "forecast_next_30d_units": 9150
+    },
+    "AUR-OIL-LAV-100": {
+      "description": "Lavender essential oil 100ml",
+      "class": "A",
+      "units_per_day_8wk_avg": 96.0,
+      "units_per_day_last_7d": 143.0,
+      "trend": "accelerating",
+      "seasonality_note": "Attaches to diffuser sales at roughly 0.8 units per diffuser.",
+      "forecast_next_30d_units": 3900
+    },
+    "AUR-OIL-LEM-100": {
+      "description": "Lemongrass essential oil 100ml",
+      "class": "A",
+      "units_per_day_8wk_avg": 74.0,
+      "units_per_day_last_7d": 71.0,
+      "trend": "flat",
+      "forecast_next_30d_units": 2190
+    },
+    "AUR-SCRUB-CHAR-200": {
+      "description": "Activated charcoal scrub 200g",
+      "class": "B",
+      "units_per_day_8wk_avg": 52.0,
+      "units_per_day_last_7d": 0.0,
+      "trend": "halted",
+      "seasonality_note": "Sales stopped on quarantine, not on demand collapse.",
+      "forecast_next_30d_units": 0
+    }
+  },
+  "promotions": [
+    {
+      "promo_id": "PRM-2026-014",
+      "name": "Festive Home Fragrance Push",
+      "starts": "2026-03-02",
+      "ends": "2026-03-22",
+      "skus": ["AUR-DIFF-CER-01", "AUR-OIL-LAV-100"],
+      "channels": ["web", "store"],
+      "expected_uplift_multiplier": 2.2,
+      "committed_marketing_spend_inr": 1850000,
+      "status": "locked"
+    },
+    {
+      "promo_id": "PRM-2026-017",
+      "name": "Hand Care Bundle",
+      "starts": "2026-03-10",
+      "ends": "2026-03-31",
+      "skus": ["AUR-HW-NEEM-500"],
+      "channels": ["web"],
+      "expected_uplift_multiplier": 1.4,
+      "committed_marketing_spend_inr": 320000,
+      "status": "draft"
+    }
+  ]
+}

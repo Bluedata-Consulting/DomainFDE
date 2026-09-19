@@ -1,0 +1,52 @@
+{
+  "as_of_date": "2026-02-11",
+  "safety_stock_days": {"A": 14, "B": 21, "C": 30},
+  "skus": {
+    "AUR-DIFF-CER-01": {
+      "description": "Ceramic oil diffuser",
+      "class": "A",
+      "status": "active",
+      "unit_cost_inr": 1180.0,
+      "nodes": {"DC-BHIWANDI": 0, "DC-CHENNAI": 2, "STORE-NETWORK": 96},
+      "on_order_units": 900,
+      "supplier_id": "SUP-CERAM-04"
+    },
+    "AUR-HW-NEEM-500": {
+      "description": "Neem hand wash 500ml",
+      "class": "A",
+      "status": "active",
+      "unit_cost_inr": 165.0,
+      "nodes": {"DC-BHIWANDI": 1240, "DC-CHENNAI": 860, "STORE-NETWORK": 2400},
+      "on_order_units": 6000,
+      "supplier_id": "SUP-PCARE-01"
+    },
+    "AUR-OIL-LAV-100": {
+      "description": "Lavender essential oil 100ml",
+      "class": "A",
+      "status": "active",
+      "unit_cost_inr": 240.0,
+      "nodes": {"DC-BHIWANDI": 980, "DC-CHENNAI": 820, "STORE-NETWORK": 1100},
+      "on_order_units": 0,
+      "supplier_id": "SUP-FRAG-09"
+    },
+    "AUR-OIL-LEM-100": {
+      "description": "Lemongrass essential oil 100ml",
+      "class": "A",
+      "status": "active",
+      "unit_cost_inr": 255.0,
+      "nodes": {"DC-BHIWANDI": 760, "DC-CHENNAI": 640, "STORE-NETWORK": 890},
+      "on_order_units": 0,
+      "supplier_id": "SUP-FRAG-09"
+    },
+    "AUR-SCRUB-CHAR-200": {
+      "description": "Activated charcoal scrub 200g",
+      "class": "B",
+      "status": "quarantined",
+      "unit_cost_inr": 210.0,
+      "nodes": {"DC-BHIWANDI": 310, "DC-CHENNAI": 180, "STORE-NETWORK": 420},
+      "on_order_units": 0,
+      "supplier_id": "SUP-PCARE-01",
+      "quarantine_reason": "Adverse reaction reports under quality review (SOP-QLT-011). Stock blocked at all nodes."
+    }
+  }
+}

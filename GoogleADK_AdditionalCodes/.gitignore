@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+ex03_rag_hybrid/chroma_store/
+ex03_rag_hybrid/bm25_index.pkl

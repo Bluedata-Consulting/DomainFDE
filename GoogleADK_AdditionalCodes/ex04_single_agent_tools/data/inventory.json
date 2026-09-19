@@ -1,0 +1,64 @@
+{
+  "AUR-DIFF-CER-01": {
+    "sku": "AUR-DIFF-CER-01",
+    "description": "Ceramic oil diffuser",
+    "status": "active",
+    "class": "A",
+    "unit_price_inr": 2490.0,
+    "nodes": {"DC-BHIWANDI": 0, "DC-CHENNAI": 2, "STORE-MUM-POWAI": 4, "STORE-BLR-INDRA": 1},
+    "next_inbound_days": 9,
+    "replenishment": "active"
+  },
+  "AUR-HW-NEEM-500": {
+    "sku": "AUR-HW-NEEM-500",
+    "description": "Neem hand wash 500ml",
+    "status": "active",
+    "class": "A",
+    "unit_price_inr": 480.0,
+    "nodes": {"DC-BHIWANDI": 1240, "DC-CHENNAI": 860, "STORE-MUM-POWAI": 42, "STORE-BLR-INDRA": 38},
+    "next_inbound_days": 4,
+    "replenishment": "active"
+  },
+  "AUR-SCRUB-CHAR-200": {
+    "sku": "AUR-SCRUB-CHAR-200",
+    "description": "Activated charcoal scrub 200g",
+    "status": "quarantined",
+    "class": "B",
+    "unit_price_inr": 620.0,
+    "nodes": {"DC-BHIWANDI": 310, "DC-CHENNAI": 180, "STORE-MUM-POWAI": 12, "STORE-BLR-INDRA": 9},
+    "next_inbound_days": null,
+    "replenishment": "blocked",
+    "quarantine_reason": "Adverse reaction reports under quality review (SOP-QLT-011)"
+  },
+  "AUR-GIFT-FEST-03": {
+    "sku": "AUR-GIFT-FEST-03",
+    "description": "Festive gift set",
+    "status": "discontinued",
+    "class": "C",
+    "unit_price_inr": 2760.0,
+    "nodes": {"DC-BHIWANDI": 0, "DC-CHENNAI": 0, "STORE-MUM-POWAI": 0, "STORE-BLR-INDRA": 0},
+    "next_inbound_days": null,
+    "replenishment": "none",
+    "note": "Seasonal line, no replenishment after festive window"
+  },
+  "AUR-OIL-LAV-100": {
+    "sku": "AUR-OIL-LAV-100",
+    "description": "Lavender essential oil 100ml",
+    "status": "active",
+    "class": "A",
+    "unit_price_inr": 750.0,
+    "nodes": {"DC-BHIWANDI": 980, "DC-CHENNAI": 820, "STORE-MUM-POWAI": 30, "STORE-BLR-INDRA": 26},
+    "next_inbound_days": 6,
+    "replenishment": "active"
+  },
+  "AUR-OIL-LEM-100": {
+    "sku": "AUR-OIL-LEM-100",
+    "description": "Lemongrass essential oil 100ml",
+    "status": "active",
+    "class": "A",
+    "unit_price_inr": 900.0,
+    "nodes": {"DC-BHIWANDI": 760, "DC-CHENNAI": 640, "STORE-MUM-POWAI": 22, "STORE-BLR-INDRA": 18},
+    "next_inbound_days": 6,
+    "replenishment": "active"
+  }
+}
