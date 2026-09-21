@@ -20,6 +20,7 @@ collection rather than living in application code.
 from __future__ import annotations
 
 import os
+from functools import lru_cache
 from typing import Any
 
 from chromadb import Documents, EmbeddingFunction, Embeddings
@@ -33,8 +34,15 @@ from .config import EMBED_DIM, EMBED_MODEL
 BATCH_SIZE = 50
 
 
+@lru_cache(maxsize=1)
 def _client() -> genai.Client:
-    """Build a genai client honouring the AI Studio / Vertex switch in .env."""
+    """Build a genai client honouring the AI Studio / Vertex switch in .env.
+
+    Cached so a reference is always held. In google-genai 2.x the Client closes
+    its HTTP pool on garbage collection, and `_client().models.generate_content()`
+    drops the outer Client as soon as `.models` is evaluated -- the request then
+    fails with "Cannot send a request, as the client has been closed".
+    """
     if os.environ.get("GOOGLE_GENAI_USE_VERTEXAI", "FALSE").upper() == "TRUE":
         return genai.Client(
             vertexai=True,

@@ -31,7 +31,14 @@ PRECISE = types.GenerateContentConfig(
     thinking_config=types.ThinkingConfig(thinking_budget=0),
 )
 
-DRAFTING = types.GenerateContentConfig(temperature=0.4, max_output_tokens=1024)
+# Thinking is on by default for 2.5 Flash and its tokens count against
+# max_output_tokens. Left on, the drafter spends most of the budget reasoning and
+# the message itself is cut off mid-sentence. A 100-word email does not need it.
+DRAFTING = types.GenerateContentConfig(
+    temperature=0.4,
+    max_output_tokens=1024,
+    thinking_config=types.ThinkingConfig(thinking_budget=0),
+)
 
 # ---------------------------------------------------------------------------
 # Stage 1 — intake. Raw ops payload to a typed case.
@@ -201,7 +208,10 @@ The rationale must cite all three desks in two sentences. Set confidence below \
     output_key="resolution",
     generate_content_config=types.GenerateContentConfig(
         temperature=0.1,
-        max_output_tokens=2048,
+        # Thinking tokens are drawn from max_output_tokens, so the ceiling must
+        # cover the thinking budget *plus* the structured answer. Equal values
+        # leave the JSON truncated whenever the model uses its full budget.
+        max_output_tokens=4096,
         # The one node where thinking earns its cost: it is trading off three
         # competing inputs under a rule hierarchy.
         thinking_config=types.ThinkingConfig(thinking_budget=2048),

@@ -218,6 +218,9 @@ def gemini_rerank(query: str, candidates: list[Retrieved]) -> list[Retrieved]:
                 "temperature": 0.0,
                 "max_output_tokens": 1024,
                 "response_mime_type": "application/json",
+                # Thinking tokens count against max_output_tokens on 2.5 Flash;
+                # left on, the JSON array is cut off mid-string and fails to parse.
+                "thinking_config": {"thinking_budget": 0},
             },
         )
         scores = {item["id"]: float(item["score"]) for item in json.loads(response.text)}
@@ -272,7 +275,13 @@ def hybrid_search(
         candidates = gemini_rerank(query, candidates)
         # A reranker score of 0 means "irrelevant". Passing it to the answering
         # model anyway is how you get confident answers from unrelated clauses.
-        candidates = [c for c in candidates if (c.rerank_score or 0) > 0]
+        # A score of None means the reranker never ran (it degraded to RRF
+        # order), which is not the same thing -- dropping those would turn a
+        # degraded answer into no answer at all.
+        candidates = [
+            c for c in candidates
+            if c.rerank_score is None or c.rerank_score > 0
+        ]
 
     return candidates[:final_k]
 

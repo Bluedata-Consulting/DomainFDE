@@ -89,7 +89,10 @@ def guardrail(
 
     # Guard 4 — the escalation matrix. High-value orders never resolve
     # automatically, whatever the model concluded.
-    from mock_backend import fetch_order  # local import keeps tools.py the only backend seam
+    # Local import keeps tools.py the only backend seam. Must be relative: under
+    # `adk web` this folder is imported as a package, and a bare `mock_backend`
+    # is not on sys.path there (main.py adds it, which hid this).
+    from .mock_backend import fetch_order
 
     order = fetch_order(args.get("order_id", ""))
     if order and order["order_value_inr"] > AUTO_ACTION_CEILING_INR and action != "escalate":
