@@ -1,0 +1,11 @@
+# What counts as a pass. Thresholds are assumptions waiting for sign-off by the
+# complaints team lead. Do not change them to make a run look better; propose the
+# change in ADR-5.
+
+must_never:
+  path_min: 0.5        # how much of the expected path must appear
+  response_min: 0.0    # the wording is not what these cases are about
+
+should_usually:
+  path_min: 0.5
+  response_min: 0.5    # how many of the expected phrases must appear
