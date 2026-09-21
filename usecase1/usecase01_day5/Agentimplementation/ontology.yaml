@@ -1,0 +1,85 @@
+# Northwind Home complaints ontology (Day 4: Context)
+#
+# What the words mean, which thing each one belongs to, and what must always be true.
+# People read this file. The agent does not: its meanings are copied into the tool
+# descriptions and the instruction. tests/test_ontology.py checks the data against it.
+#
+# Definitions marked "assumption" wait for sign-off by Legal or the complaints team lead.
+
+entities:
+  Customer:
+    definition: One real person. May have several accounts. This is the golden record.
+    key: customer_id
+    fields: [name, vulnerable, circumstance]
+  Account:
+    definition: One login with its own email address. Belongs to exactly one customer.
+    key: account_id
+    fields: [email, customer_id]
+  Order:
+    definition: One purchase, placed from one account.
+    key: order_id
+    fields: [account_id, value_gbp]
+  Complaint:
+    definition: One complaint about one order, raised from one account.
+    key: complaint_id
+    fields: [account_id, order_id, arrived_via, text, reported_previous_contacts]
+  Refund:
+    definition: Money returned against one complaint. A single payment, not a running total.
+    key: refund_id
+    fields: [complaint_id, amount_gbp]
+  Consent:
+    definition: Permission to contact a customer on one channel for one purpose.
+    key: [customer_id, channel, purpose]
+    fields: [allowed]
+
+relationships:
+  - {from: Account,   name: belongs_to,  to: Customer,  cardinality: many-to-one}
+  - {from: Order,     name: placed_from, to: Account,   cardinality: many-to-one}
+  - {from: Complaint, name: raised_from, to: Account,   cardinality: many-to-one}
+  - {from: Complaint, name: about,       to: Order,     cardinality: many-to-one}
+  - {from: Refund,    name: settles,     to: Complaint, cardinality: many-to-one}
+  - {from: Consent,   name: given_by,    to: Customer,  cardinality: many-to-one}
+  # Not modelled yet: a complaint that reopens an earlier one. See golden question G6.
+
+definitions:
+  vulnerable:
+    meaning: A circumstance of the customer that needs specialist handling. It applies to every complaint from that customer, on every account.
+    belongs_to: Customer
+  channel:
+    meaning: A way of contacting the customer. One of email, chat or phone.
+    values: [email, chat, phone]
+    not_to_be_confused_with: arrived_via, the channel a complaint came in on
+  purpose:
+    meaning: Why a message is sent. Service is about the customer's own order or complaint. Marketing offers anything else, including discounts and vouchers.
+    values: [service, marketing]
+    status: assumption for Legal
+  refund_limit:
+    meaning: The agent may refund up to 25 GBP in total on one complaint, across all refunds. Above that, Billing approves.
+    belongs_to: Complaint
+    status: assumption for the complaints team lead and Finance
+  previous_contacts:
+    meaning: Earlier complaints from the same customer, on any account.
+    belongs_to: Customer
+  at_risk:
+    meaning: The customer is vulnerable, or the complaint text mentions legal action.
+
+synonyms:
+  refund: [money back, reimbursement, repayment]
+  ombudsman: [financial ombudsman, fos]
+  solicitor: [lawyer, legal representative]
+  chat: [live chat, web chat]
+  complaint: [case, ticket]
+
+rules:
+  - id: account_has_customer
+    rule: Every account belongs to a customer that exists.
+  - id: complaint_order_same_customer
+    rule: A complaint and the order it is about belong to the same customer.
+  - id: refunds_within_order_value
+    rule: The total of refunds on a complaint is not more than the value of its order.
+  - id: vulnerability_one_value_per_customer
+    rule: A customer's vulnerability is recorded once, on the customer. No account may disagree with it.
+  - id: consent_has_purpose
+    rule: Every consent names a channel, a purpose and whether it is allowed.
+  - id: contacts_match_text
+    rule: If the complaint text states which contact this is, reported_previous_contacts agrees with it.
