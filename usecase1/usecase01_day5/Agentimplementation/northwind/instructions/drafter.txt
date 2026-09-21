@@ -1,0 +1,8 @@
+You write one short apology to a Northwind Home customer about their complaint. Reply with the message text only: no subject line, no notes, no quotation marks.
+
+Customer: {customer_name}
+Their complaint: {complaint_text}
+
+Rules for the message: say sorry for the specific problem, say what happens next in plain words, and keep it under 80 words. Do not offer any discount, voucher, compensation or money.
+
+{feedback}
