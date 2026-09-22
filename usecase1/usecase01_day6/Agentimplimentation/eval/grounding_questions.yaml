@@ -1,0 +1,76 @@
+# The Day 6 golden set: ten questions with known answers.
+#
+# Each answer comes from the data, the policies, or both, never from general knowledge.
+# The same ten questions run on all three agents, so the difference between them is
+# the effect of grounding, and then of the shape of the data.
+#
+#   needs          sql, policy or both: where the answer lives
+#   expect         every one of these must appear in the answer (ignoring case)
+#   any_of         at least one of these must appear (for answers with several fair wordings)
+#   why            where the answer comes from, so a failure can be diagnosed
+
+eval_set: day6_grounding_v1
+questions:
+  - id: G1
+    needs: sql
+    question: How many complaints come from customers who are vulnerable?
+    expect: [C-103, C-105]
+    why: "complaints_v.customer_is_vulnerable. In the raw tables the account flag is wrong; the customer flag is right"
+
+  - id: G2
+    needs: sql
+    question: What is the total already refunded on complaint C-101?
+    any_of: ["10 pounds", "£10", "10.0", "10 GBP", " 10 "]
+    why: "refunds_v, or complaints_v.refunds_so_far_gbp"
+
+  - id: G3
+    needs: sql
+    question: Which returned items are on the recall list?
+    expect: [R-202]
+    why: "returns_v.on_recall_list. Raw stores it as Y or N in rtn_tbl.rcl"
+
+  - id: G4
+    needs: sql
+    question: How many returned items are grade C?
+    expect: ["3"]
+    why: "returns_v.condition_grade. Raw stores grades as codes 1 to 3 in rtn_tbl.grd, with no key to say 3 means C"
+
+  - id: G5
+    needs: sql
+    question: Which grade C returns can still be claimed from the vendor?
+    expect: [R-203, R-206]
+    why: "returns_v, grade C with vendor_claim_open yes. R-204's window has closed"
+
+  - id: G6
+    needs: policy
+    question: What does condition grade C mean, and can a grade C item be restocked?
+    expect: [damaged]
+    any_of: ["never restocked", "not be restocked", "cannot be restocked", "not restocked", "never"]
+    why: "returns_grading.md, Condition grades"
+
+  - id: G7
+    needs: policy
+    question: Can we give a customer compensation for a delivery that was five days late?
+    expect: [team lead]
+    any_of: ["5 pounds", "£5", "goodwill credit"]
+    why: "delivery_delays.md. More than 5 days late: up to 5 pounds, approved by the team lead. Exactly 5 days is a fair debate"
+
+  - id: G8
+    needs: policy
+    question: What recovery rate do we usually get when we liquidate small electricals?
+    expect: ["15", "25"]
+    why: "returns_grading.md, Liquidation recovery. 15 to 25 per cent"
+
+  - id: G9
+    needs: both
+    question: The customer on complaint C-106 wants a full refund. Can the complaints service pay it without approval?
+    expect: ["35"]
+    any_of: ["approval", "billing team lead"]
+    why: "complaints_v gives an order value of 35; refunds.md says over 25 needs the Billing team lead"
+
+  - id: G10
+    needs: both
+    question: How many days are left to claim from the vendor for the kettle on return R-206, and what happens if we miss it?
+    expect: ["5"]
+    any_of: ["rejected", "written off", "write off"]
+    why: "returns_v.days_to_vendor_deadline is 5; vendor_claims.md says late claims are rejected and written off"
