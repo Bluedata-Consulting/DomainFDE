@@ -1,0 +1,7 @@
+id,question,function,args,expected,path,source
+G1,Can we send the customer on C-104 an apology by email?,can_message,C-104|email|service,yes,Complaint > Account > Customer > Consent (email; service),consents in data/northwind.json
+G2,Can we send the customer on C-104 a discount by chat?,can_message,C-104|chat|marketing,no,Complaint > Account > Customer > Consent (chat; marketing),consents in data/northwind.json
+G3,Is complaint C-105 at risk?,at_risk,C-105,yes,Complaint > Account > Customer > vulnerable,customers in data/northwind.json
+G4,How much more can the agent refund on C-101 without approval?,refund_headroom,C-101,15,Complaint < Refund (25 GBP limit minus 10 GBP already refunded),refunds in data/northwind.json
+G5,How many complaints has the customer behind C-105 made in total?,complaints_by_same_person,C-105,2,Complaint > Account > Customer < Account < Complaint,accounts and complaints in data/northwind.json
+G6,Was complaint C-101 reopened within 14 days?,reopened_within_14_days,C-101,GAP,Complaint > reopens > Complaint (not in the ontology),none yet: a question for the data engineer
