@@ -1,0 +1,46 @@
+# The semantic layer: what the agent reads about the data in "semantic" mode.
+# Each view uses the Day 4 ontology's words. In "raw" mode the agent sees only
+# table and column names, as a database would show them.
+
+complaints_v:
+  description: One row per complaint, joined to the customer behind it and the order it is about.
+  columns:
+    complaint_id: The complaint, such as C-104
+    customer_id: The customer, one real person who may have several accounts
+    customer_name: The customer's name
+    customer_is_vulnerable: yes or no. Read from the customer, so it applies on every account they hold
+    order_id: The order the complaint is about
+    order_value_gbp: What the order was worth, in pounds
+    arrived_via: The channel the complaint came in on (email, chat or phone)
+    complaint_text: What the customer wrote
+    refunds_so_far_gbp: Total already refunded on this complaint, in pounds
+
+returns_v:
+  description: One row per returned item, as graded by the inspector.
+  columns:
+    return_id: The return, such as R-206
+    complaint_id: The complaint it came from, if any
+    item: What the item is
+    value_gbp: What the item is worth, in pounds
+    condition_grade: A (as new), B (opened, working) or C (damaged or faulty)
+    on_recall_list: yes or no
+    recall_notice: The recall notice, if it is recalled
+    vendor: The supplier
+    days_to_vendor_deadline: Days left to claim from the vendor. Negative means the window has closed
+    vendor_claim_open: yes or no
+
+refunds_v:
+  description: One row per refund already made.
+  columns:
+    refund_id: The refund
+    complaint_id: The complaint it was paid against
+    amount_gbp: The amount, in pounds
+
+consents_v:
+  description: What each customer has agreed to be contacted about, by channel and purpose.
+  columns:
+    customer_id: The customer
+    customer_name: The customer's name
+    channel: email, chat or phone
+    purpose: service (about their own order) or marketing (any offer). Empty means not recorded
+    allowed: yes or no
