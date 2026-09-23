@@ -1,0 +1,25 @@
+tag: r1
+created: 2026-09-22 09:00 UTC
+based_on: null
+status: current
+model: gemini-2.5-flash
+notes: 'First production release: the Day 5 team with the Day 6 knowledge agent'
+tool_settings: {}
+fingerprints:
+  instructions/billing.txt: b972b435ee06
+  instructions/complaints.txt: f0bf58d46a77
+  instructions/coordinator.txt: a05b8dc52854
+  instructions/operations_assistant.txt: c36b6b28c3ef
+  instructions/returns.txt: 760137db84c3
+  policies/contact_consent.md: ac4edf38fce9
+  policies/delivery_delays.md: 7297d5eb3ed8
+  policies/refunds.md: 634c2dde1b7a
+  policies/returns_grading.md: 39a6c5f36b0c
+  policies/vendor_claims.md: c16a9afa0c23
+  policies/vulnerable_customers.md: 12b23a3ecd21
+  code/northwind/rules.py: 27fea51367e3
+  code/northwind/tools.py: 14fca72e57c0
+  code/northwind/guardrail.py: 41ae93f2a0ce
+  code/northwind/semantic_layer.yaml: a01d2ae124ae
+  code/northwind/sql.py: 123a9a050996
+  code/northwind/policy_search.py: a57e34b3ae69
