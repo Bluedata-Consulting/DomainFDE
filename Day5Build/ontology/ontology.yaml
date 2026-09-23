@@ -1,0 +1,640 @@
+# Meridian Roasters -- business ontology
+#
+# The single place where the business vocabulary, the entity map, the metric
+# definitions and the goodwill policy are written down. The agent reads this,
+# not the table names.
+#
+# Every table/column reference here is checked against data/roastery.db by
+# ontology_loader.validate_ontology(), which runs at import time.
+
+version: 1
+database: data/roastery.db
+as_of_date: "2026-03-16"   # the case clock; do not use the real one
+
+# ---------------------------------------------------------------------------
+# 1. VOCABULARIES -- the allowed values, and the words people use instead
+# ---------------------------------------------------------------------------
+
+vocabularies:
+
+  sales_order_status:
+    column: sales_orders.status
+    values: [placed, roasted, shipped, delivered, returned, cancelled]
+    synonyms:
+      dispatched: shipped
+      sent: shipped
+      out_the_door: shipped
+      fulfilled: delivered
+      arrived: delivered
+      received: delivered
+      refused: returned
+      sent_back: returned
+      voided: cancelled
+      killed: cancelled
+      new: placed
+      in_the_roaster: roasted
+
+  ticket_category:
+    column: tickets.category
+    values: [delivery, quality, billing, subscription, other]
+    synonyms:
+      late: delivery
+      shipping: delivery
+      lost: delivery
+      damaged: delivery
+      taste: quality
+      tastes_wrong: quality
+      flat: quality
+      off_profile: quality
+      stale: quality
+      cupping: quality
+      invoice: billing
+      charge: billing
+      payment: billing
+      overcharged: billing
+      plan: subscription
+      renewal: subscription
+      pause: subscription
+      cancellation: subscription
+
+  channel:
+    column: customers.channel
+    values: [d2c, wholesale]
+    synonyms:
+      trade: wholesale
+      b2b: wholesale
+      cafe: wholesale
+      account: wholesale
+      retail: d2c
+      consumer: d2c
+      direct: d2c
+      subscriber: d2c
+
+  ticket_status:
+    column: tickets.status
+    values: [open, pending, resolved, escalated]
+    synonyms:
+      closed: resolved
+      done: resolved
+      raised: open
+      waiting: pending
+      escalation: escalated
+      churn_risk: escalated
+
+  shipment_status:
+    column: shipments.status
+    values: [in_transit, delivered, exception, lost]
+    synonyms:
+      on_the_road: in_transit
+      out_for_delivery: in_transit
+      missing: lost
+      stuck: exception
+      held: exception
+
+  purchase_order_status:
+    column: purchase_orders.status
+    values: [open, in_transit, received, cancelled]
+    synonyms:
+      placed: open
+      sailing: in_transit
+      landed: received
+      cleared: received
+
+  inbound_status:
+    column: inbound_shipments.status
+    values: [booked, sailing, delayed, arrived, cleared]
+    synonyms:
+      at_sea: sailing
+      afloat: sailing
+      late: delayed
+      held_at_port: delayed
+      customs: cleared
+
+  subscription_status:
+    column: subscriptions.status
+    values: [active, paused, cancelled]
+    synonyms:
+      live: active
+      on_hold: paused
+      churned: cancelled
+      lapsed: cancelled
+
+  loyalty_tier:
+    column: customers.loyalty_tier
+    values: [bronze, silver, gold]
+    synonyms:
+      vip: gold
+      top_tier: gold
+
+  account_tier:
+    column: wholesale_accounts.tier
+    values: [flagship, standard, trial]
+    synonyms:
+      key_account: flagship
+      strategic: flagship
+      pilot: trial
+
+  refund_reason:
+    column: refunds.reason_code
+    values: [late_delivery, quality, damaged, goodwill, other]
+    synonyms:
+      late: late_delivery
+      missed_promise: late_delivery
+      taste: quality
+      gesture: goodwill
+      credit: goodwill
+
+# ---------------------------------------------------------------------------
+# 2. ENTITIES -- what the business talks about, and which one it means
+# ---------------------------------------------------------------------------
+
+entities:
+
+  Customer:
+    table: customers
+    key: customer_id
+    canonical_terms: [customer, subscriber, buyer, drinker, member, client]
+    label_columns: [first_name, last_name, email]
+    disambiguation_note: >-
+      A Customer is whoever the order was billed to -- a D2C individual, or the
+      wholesale buyer sitting under an account. NOT a supplier, and NOT the
+      named contact at a wholesale account (that is a WholesaleContact).
+
+  WholesaleAccount:
+    table: wholesale_accounts
+    key: account_id
+    canonical_terms: [account, wholesale account, trade account, cafe, hotel, business]
+    label_columns: [account_name]
+    disambiguation_note: >-
+      A trading business (cafe, hotel group, workspace), billed in its own
+      currency. "Account" almost always means this, NOT an individual customer
+      record and NOT a login.
+
+  WholesaleContact:
+    table: wholesale_contacts
+    key: contact_id
+    canonical_terms: [contact, buyer contact, account contact, owner, manager]
+    label_columns: [contact_name, email]
+    disambiguation_note: >-
+      A named person AT a wholesale account. "Contact" is ambiguous -- this is
+      the customer side. For the origin side see SupplierContact. The same
+      first name exists on both sides.
+
+  Supplier:
+    table: suppliers
+    key: supplier_id
+    canonical_terms: [supplier, farm, estate, finca, exporter, origin, producer, mill]
+    label_columns: [supplier_name, country]
+    disambiguation_note: >-
+      Who Meridian BUYS green coffee from. NOT a customer and NOT a carrier.
+
+  SupplierContact:
+    table: supplier_contacts
+    key: contact_id
+    canonical_terms: [supplier contact, export manager, origin contact]
+    label_columns: [contact_name, email]
+    disambiguation_note: >-
+      A named person at a SUPPLIER. See WholesaleContact for the customer side.
+
+  SalesOrder:
+    table: sales_orders
+    key: sales_order_id
+    canonical_terms: [order, sales order, customer order, purchase (by a customer)]
+    label_columns: [sales_order_id, order_date]
+    disambiguation_note: >-
+      "Order" is the single most dangerous word here. A SalesOrder is OUTBOUND:
+      coffee sold to a customer. Coffee Meridian bought from a farm is a
+      PurchaseOrder. If the speaker is in care, fulfilment or finance they
+      almost always mean this one; if they are in procurement they do not.
+
+  PurchaseOrder:
+    table: purchase_orders
+    key: purchase_order_id
+    canonical_terms: [PO, purchase order, green order, buy, origin order]
+    label_columns: [purchase_order_id, po_date]
+    disambiguation_note: >-
+      INBOUND: green coffee bought from a supplier. NOT a customer order. See
+      SalesOrder.
+
+  Shipment:
+    table: shipments
+    key: shipment_id
+    canonical_terms: [shipment, parcel, delivery, package, tracking]
+    label_columns: [shipment_id, tracking_ref]
+    disambiguation_note: >-
+      "Shipment" is ambiguous. This is the OUTBOUND parcel to a customer, with
+      a carrier and a promised date. The sea container from origin is an
+      InboundShipment.
+
+  InboundShipment:
+    table: inbound_shipments
+    key: inbound_id
+    canonical_terms: [container, inbound, vessel, sailing, freight, ETA]
+    label_columns: [inbound_id, container_ref]
+    disambiguation_note: >-
+      The sea container carrying green coffee origin -> Portland. NOT the
+      parcel a customer receives. See Shipment.
+
+  Ticket:
+    table: tickets
+    key: ticket_id
+    canonical_terms: [ticket, complaint, case, issue, contact (support), escalation]
+    label_columns: [ticket_id, subject]
+    disambiguation_note: >-
+      What a customer REPORTED, in the category the agent typed. It is evidence
+      of a perception, not proof of a cause -- a "quality" ticket does not by
+      itself mean the coffee was bad, and delivery performance is measured on
+      Shipment, not here.
+
+  Subscription:
+    table: subscriptions
+    key: subscription_id
+    canonical_terms: [subscription, plan, recurring order, standing order]
+    label_columns: [subscription_id, plan]
+    disambiguation_note: >-
+      The recurring agreement, NOT the individual SalesOrders it generates.
+
+  Refund:
+    table: refunds
+    key: refund_id
+    canonical_terms: [refund, credit, money back, goodwill, compensation]
+    label_columns: [refund_id, reason_code]
+    disambiguation_note: >-
+      Money already returned, in the order's own currency. NOT a proposed
+      goodwill gesture (see policy.goodwill_caps) and NOT revenue lost.
+
+  Product:
+    table: products
+    key: product_id
+    canonical_terms: [product, SKU, blend, coffee, bag, roast]
+    label_columns: [sku, name]
+    disambiguation_note: >-
+      The finished item sold to customers. NOT the green coffee it was roasted
+      from (GreenLot).
+
+  RoastBatch:
+    table: roast_batches
+    key: batch_id
+    canonical_terms: [batch, roast, roast run, production run]
+    label_columns: [batch_id, roast_date]
+    disambiguation_note: >-
+      A BATCH is a roast run (production). A LOT is the green coffee it
+      consumed (supply). These two are constantly confused; a batch consumes
+      exactly one lot, and that join is the bridge to the supply side.
+
+  GreenLot:
+    table: green_lots
+    key: lot_id
+    canonical_terms: [lot, green, green coffee, parcel of green, cupping score]
+    label_columns: [lot_id, origin]
+    disambiguation_note: >-
+      Green coffee received against a PurchaseOrder, measured in kg. NOT a
+      RoastBatch and NOT finished stock.
+
+  InventorySnapshot:
+    table: inventory_snapshots
+    key: snapshot_id
+    canonical_terms: [inventory, stock, on hand, silo, availability]
+    label_columns: [snapshot_id, as_of_date]
+    disambiguation_note: >-
+      FINISHED product in units, as at a date. Green coffee stock is kg on
+      GreenLot.kg_remaining -- a different number with a different unit.
+
+  # -- abstract -------------------------------------------------------------
+
+  Person:
+    abstract: true
+    canonical_terms: [person, someone, contact, who, name, jane, customer name]
+    disambiguation_note: >-
+      A bare human name is NEVER unique in this business. The same first name
+      appears as a D2C customer, as a wholesale contact and as a supplier
+      contact. Resolve the name before answering, and if more than one person
+      matches, show every candidate and ask -- do not pick one.
+    resolution:
+      on_ambiguity: return_candidates
+      sources:
+        - entity: Customer
+          table: customers
+          id_column: customer_id
+          match_columns: [first_name, last_name, email]
+          disambiguate_with: [city, state, country, channel, loyalty_tier]
+          describes: an individual or wholesale buyer who places orders
+        - entity: WholesaleContact
+          table: wholesale_contacts
+          id_column: contact_id
+          match_columns: [contact_name, email]
+          disambiguate_with: [role, account_id]
+          describes: a named person at a wholesale account
+        - entity: SupplierContact
+          table: supplier_contacts
+          id_column: contact_id
+          match_columns: [contact_name, email]
+          disambiguate_with: [role, supplier_id]
+          describes: a named person at a green coffee supplier
+
+# ---------------------------------------------------------------------------
+# 3. METRICS -- one definition, owned, written tightly enough to argue with
+# ---------------------------------------------------------------------------
+
+metrics:
+
+  on_time_delivery:
+    owner: Fulfilment
+    terms: [on time, on-time, OTD, late delivery, missed promise, service level]
+    tables: [shipments]
+    columns: [shipments.delivered_at, shipments.promised_at]
+    definition: >-
+      A shipment is ON TIME when it has actually been delivered and the
+      delivery date is on or before the promised date:
+      delivered_at IS NOT NULL AND date(delivered_at) <= date(promised_at).
+      A shipment still in transit is NEITHER on time NOR late -- it is
+      EXCLUDED from the measure entirely, because the outcome is not yet
+      known. Counting in-transit parcels as late overstates the problem;
+      counting them as on time hides it. The denominator is delivered
+      shipments only. Measured on the promise made to the CUSTOMER
+      (shipments.promised_at), never on the supplier's lead time.
+    sql: |
+      SELECT COUNT(*) AS delivered_count,
+             SUM(CASE WHEN date(delivered_at) <= date(promised_at)
+                      THEN 1 ELSE 0 END) AS on_time_count,
+             ROUND(100.0 * SUM(CASE WHEN date(delivered_at) <= date(promised_at)
+                                    THEN 1 ELSE 0 END) / COUNT(*), 1) AS on_time_pct
+      FROM shipments
+      WHERE delivered_at IS NOT NULL
+
+  delivery_slip_days:
+    owner: Fulfilment
+    terms: [slip, days late, how late, overdue by, delay]
+    tables: [shipments]
+    columns: [shipments.delivered_at, shipments.promised_at]
+    definition: >-
+      Whole days between the promised date and the actual delivery date:
+      julianday(delivered_at) - julianday(promised_at). Positive means late,
+      negative means early, zero means exactly on the promise. Undefined
+      (NULL) while the parcel is in transit -- do not treat NULL as zero.
+    sql: |
+      SELECT sales_order_id,
+             CAST(julianday(delivered_at) - julianday(promised_at) AS INTEGER) AS slip_days
+      FROM shipments
+      WHERE delivered_at IS NOT NULL
+
+  supplier_lead_time_actual:
+    owner: Procurement
+    terms: [lead time, supplier lead time, origin to port, how long did it take]
+    tables: [purchase_orders, suppliers]
+    columns: [purchase_orders.po_date, purchase_orders.actual_arrival, suppliers.lead_time_days_target]
+    definition: >-
+      Days from raising the purchase order to the green coffee physically
+      arriving: julianday(actual_arrival) - julianday(po_date). Compare it
+      against suppliers.lead_time_days_target, which is the AGREED target and
+      not a measurement of anything. Purchase orders that have not arrived are
+      excluded from averages -- if they are included as zero, a delayed
+      shipment perversely improves the supplier's score. This metric is about
+      the SUPPLIER's promise; the promise made to a customer is
+      on_time_delivery and has nothing to do with it.
+    sql: |
+      SELECT po.supplier_id, s.supplier_name, s.lead_time_days_target,
+             ROUND(AVG(julianday(po.actual_arrival) - julianday(po.po_date)), 1)
+                 AS avg_actual_lead_time_days,
+             ROUND(AVG(julianday(po.actual_arrival) - julianday(po.po_date)
+                       - s.lead_time_days_target), 1) AS avg_days_over_target
+      FROM purchase_orders po
+      JOIN suppliers s ON s.supplier_id = po.supplier_id
+      WHERE po.actual_arrival IS NOT NULL
+      GROUP BY po.supplier_id, s.supplier_name, s.lead_time_days_target
+
+  at_risk_account:
+    owner: Wholesale
+    terms: [at risk, churn risk, escalated account, unhappy account, might leave]
+    tables: [wholesale_accounts, customers, tickets, shipments, sales_orders]
+    columns: [tickets.status, tickets.sentiment, tickets.category, wholesale_accounts.tier]
+    definition: >-
+      A wholesale account is AT RISK, in the 90 days to the as-of date, when
+      any of these holds: (a) it has at least one escalated ticket; or (b) it
+      has two or more negative-sentiment tickets; or (c) it has at least one
+      quality ticket AND at least one late delivery. Clause (c) exists because
+      a single complaint of either kind is normal noise, while both at once is
+      the pattern that precedes churn. Flagship accounts are not automatically
+      at risk -- tier raises the COST of the risk, not its likelihood. This is
+      a triage signal, not a prediction; always read the tickets before acting
+      on it.
+    sql: |
+      SELECT a.account_id, a.account_name, a.tier, a.country, a.currency,
+             SUM(CASE WHEN t.status = 'escalated' THEN 1 ELSE 0 END) AS escalated_tickets,
+             SUM(CASE WHEN t.sentiment = 'negative' THEN 1 ELSE 0 END) AS negative_tickets,
+             SUM(CASE WHEN t.category = 'quality' THEN 1 ELSE 0 END) AS quality_tickets,
+             SUM(CASE WHEN sh.delivered_at IS NOT NULL
+                       AND date(sh.delivered_at) > date(sh.promised_at)
+                      THEN 1 ELSE 0 END) AS late_deliveries
+      FROM wholesale_accounts a
+      JOIN customers c ON c.account_id = a.account_id
+      LEFT JOIN tickets t ON t.customer_id = c.customer_id
+           AND date(t.opened_at) >= date(:as_of, '-90 days')
+      LEFT JOIN sales_orders o ON o.customer_id = c.customer_id
+           AND date(o.order_date) >= date(:as_of, '-90 days')
+      LEFT JOIN shipments sh ON sh.sales_order_id = o.sales_order_id
+      GROUP BY a.account_id, a.account_name, a.tier, a.country, a.currency
+      HAVING escalated_tickets >= 1
+          OR negative_tickets >= 2
+          OR (quality_tickets >= 1 AND late_deliveries >= 1)
+
+  at_risk_subscriber:
+    owner: D2C
+    terms: [at risk subscriber, churn, cancelled subscription, lapsing, pausing]
+    tables: [subscriptions, customers, tickets]
+    columns: [subscriptions.status, subscriptions.cancel_reason, tickets.category]
+    definition: >-
+      A D2C subscriber is AT RISK, in the 90 days to the as-of date, when they
+      hold an active or paused subscription AND have raised at least one
+      quality or delivery ticket; or when they have already cancelled with a
+      cancel_reason of 'quality'. Already-cancelled subscribers are reported
+      separately as LOST rather than at risk -- merging the two hides whether
+      the bleeding has stopped. A paused subscription counts as at risk: a
+      pause is how a D2C customer churns quietly.
+    sql: |
+      SELECT c.customer_id,
+             c.first_name || ' ' || c.last_name AS customer_name,
+             c.loyalty_tier, c.city, c.state,
+             s.subscription_id, s.status AS subscription_status, s.cancel_reason,
+             SUM(CASE WHEN t.category = 'quality' THEN 1 ELSE 0 END) AS quality_tickets,
+             SUM(CASE WHEN t.category = 'delivery' THEN 1 ELSE 0 END) AS delivery_tickets
+      FROM subscriptions s
+      JOIN customers c ON c.customer_id = s.customer_id
+      LEFT JOIN tickets t ON t.customer_id = c.customer_id
+           AND date(t.opened_at) >= date(:as_of, '-90 days')
+      WHERE c.channel = 'd2c'
+      GROUP BY c.customer_id, customer_name, c.loyalty_tier, c.city, c.state,
+               s.subscription_id, s.status, s.cancel_reason
+      HAVING (s.status IN ('active', 'paused')
+              AND (quality_tickets >= 1 OR delivery_tickets >= 1))
+          OR (s.status = 'cancelled' AND s.cancel_reason = 'quality')
+
+  refund_exposure:
+    owner: Finance
+    terms: [refund exposure, refunds, cost of, credits, what has this cost us]
+    tables: [refunds, sales_orders]
+    columns: [refunds.amount, refunds.currency, refunds.reason_code]
+    definition: >-
+      The total already refunded, GROUPED BY CURRENCY and by reason_code.
+      Refunds are recorded in the currency of the order (USD, CAD, GBP) and
+      this database holds no FX rate table for them, so a single grand total
+      cannot be produced honestly -- report the currencies side by side and
+      say why. Never add USD and CAD amounts together. The fx_rate_at_po
+      column on purchase_orders is a procurement rate fixed at PO time and
+      must NOT be borrowed to convert customer refunds. This is money already paid out;
+      it is not the same as revenue at risk or as proposed goodwill.
+    sql: |
+      SELECT r.currency, r.reason_code,
+             COUNT(*) AS refund_count,
+             ROUND(SUM(r.amount), 2) AS total_refunded
+      FROM refunds r
+      GROUP BY r.currency, r.reason_code
+      ORDER BY r.currency, total_refunded DESC
+
+# ---------------------------------------------------------------------------
+# 4. POLICY -- what the agent may offer, and when a human must sign
+# ---------------------------------------------------------------------------
+
+policy:
+  currency: USD
+  goodwill_caps:
+    d2c:
+      bronze: 25
+      silver: 50
+      gold: 120
+    wholesale:
+      flagship: 500
+      standard: 250
+      trial: 100
+  human_approval_required_above: 150
+  notes:
+    - Caps are per incident, in USD, and are ceilings -- not defaults to pay out.
+    - Any gesture above 150 USD requires named human approval before it is
+      offered to the customer, including wholesale flagship gestures.
+    - A customer's tier sets the cap; it does not entitle them to it.
+    - Propose a gesture as a case action for approval. Never tell a customer a
+      refund has been made unless a Refund row already exists.
+
+# ---------------------------------------------------------------------------
+# 5. TOOLS -- which entity each tool serves, and where each parameter's
+#    values legally come from
+# ---------------------------------------------------------------------------
+
+tools:
+
+  find_customers:
+    entity: Customer
+    params:
+      name: {type: string}
+      email: {type: string}
+      city: {type: string}
+      channel: {from: vocabularies.channel}
+      limit: {type: integer}
+
+  get_customer_360:
+    entity: Customer
+    params:
+      customer_id: {from: Customer.customer_id, required: true}
+
+  find_wholesale_contacts:
+    entity: WholesaleContact
+    params:
+      name: {type: string}
+      account_id: {from: WholesaleAccount.account_id}
+
+  find_sales_orders:
+    entity: SalesOrder
+    params:
+      customer_id: {from: Customer.customer_id}
+      account_id: {from: WholesaleAccount.account_id}
+      status: {from: vocabularies.sales_order_status}
+      since: {type: date}
+      until: {type: date}
+      limit: {type: integer}
+
+  get_sales_order_detail:
+    entity: SalesOrder
+    params:
+      sales_order_id: {from: SalesOrder.sales_order_id, required: true}
+
+  get_shipment_status:
+    entity: Shipment
+    params:
+      sales_order_id: {from: SalesOrder.sales_order_id, required: true}
+
+  find_late_shipments:
+    entity: Shipment
+    metric: on_time_delivery
+    params:
+      since: {type: date}
+      state: {type: string}
+      min_slip_days: {type: integer}
+      limit: {type: integer}
+
+  find_tickets:
+    entity: Ticket
+    params:
+      customer_id: {from: Customer.customer_id}
+      category: {from: vocabularies.ticket_category}
+      status: {from: vocabularies.ticket_status}
+      since: {type: date}
+      limit: {type: integer}
+
+  get_ticket_thread:
+    entity: Ticket
+    params:
+      ticket_id: {from: Ticket.ticket_id, required: true}
+
+  ticket_trend:
+    entity: Ticket
+    params:
+      category: {from: vocabularies.ticket_category}
+      months: {type: integer}
+
+  find_suppliers:
+    entity: Supplier
+    params:
+      name: {type: string}
+      country: {type: string}
+
+  find_purchase_orders:
+    entity: PurchaseOrder
+    params:
+      supplier_id: {from: Supplier.supplier_id}
+      status: {from: vocabularies.purchase_order_status}
+      since: {type: date}
+      limit: {type: integer}
+
+  get_inbound_shipments:
+    entity: InboundShipment
+    params:
+      purchase_order_id: {from: PurchaseOrder.purchase_order_id}
+      status: {from: vocabularies.inbound_status}
+
+  get_supplier_performance:
+    entity: Supplier
+    metric: supplier_lead_time_actual
+    params:
+      supplier_id: {from: Supplier.supplier_id}
+      since: {type: date}
+
+  trace_product_to_lot:
+    entity: GreenLot
+    params:
+      sales_order_id: {from: SalesOrder.sales_order_id}
+      product_id: {from: Product.product_id}
+      since: {type: date}
+      until: {type: date}
+
+  find_roast_batches:
+    entity: RoastBatch
+    params:
+      product_id: {from: Product.product_id}
+      flagged_only: {type: boolean}
+      since: {type: date}
+
+  get_inventory_position:
+    entity: InventorySnapshot
+    params:
+      product_id: {from: Product.product_id}
+      as_of: {type: date}
