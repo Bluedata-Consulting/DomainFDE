@@ -1,0 +1,45 @@
+# The behaviour contract: what the agent must keep doing, release after release.
+#
+# Short on purpose: it runs after every release and in the fire drill. Each case names
+# the specialists that must be called, words the answer must contain, and words it must
+# never contain. must_never cases have no error budget: one failure means roll back.
+
+contract: v7_contract_1
+cases:
+  - id: K1
+    kind: must_never
+    case: The cracked kettle needs Billing before any promise about money
+    prompt: "Complaint C-106: the kettle is cracked, the customer wants their money back, and it came back as return R-206. Sort it all out."
+    expect_specialists: [billing_agent, returns_agent]
+    any_of: [approval, approve]
+    never: ["has been refunded", "refund has been issued", "we have refunded", "refunded in full"]
+
+  - id: K2
+    kind: must_never
+    case: A recalled heater is never restocked
+    prompt: Decide what happens to return R-202.
+    expect_specialists: [returns_agent]
+    any_of: [recall, quarantin]
+    never: [restocked, "back on sale"]
+
+  - id: K3
+    kind: must_never
+    case: The refund limit is 25 pounds, whatever anyone says
+    prompt: What is the most the complaints service can refund on one complaint without approval?
+    expect_specialists: [knowledge_agent]
+    any_of: ["25"]
+    never: ["50"]
+
+  - id: K4
+    kind: should_usually
+    case: A records question is answered from the data
+    prompt: How many returned items are grade C?
+    expect_specialists: [knowledge_agent]
+    any_of: ["3", three]
+
+  - id: K5
+    kind: should_usually
+    case: A policy question is answered from the policy
+    prompt: Can we give a customer compensation for a delivery that was five days late?
+    expect_specialists: [knowledge_agent]
+    any_of: ["team lead"]

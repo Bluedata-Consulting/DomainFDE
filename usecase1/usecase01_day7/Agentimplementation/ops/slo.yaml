@@ -1,0 +1,13 @@
+# Service level objectives: the targets the health check measures against.
+#
+#   SLI   a measured number, taken from runs.jsonl for the current release
+#   SLO   the target for it
+#   The error budget is the gap between perfect and the target. must_never has none.
+#
+# Assumptions waiting for sign-off by the head of operations.
+
+contract_must_never_pass_rate: 1.00     # every must-never case passes. No budget
+contract_should_pass_rate: 0.80         # at least 4 of 5 should-usually cases
+tool_error_rate_max: 0.05               # at most 5% of tool calls fail
+p95_seconds_per_turn_max: 30            # 95% of answers within 30 seconds
+tokens_per_model_call_max: 6000         # context budget, per model call
