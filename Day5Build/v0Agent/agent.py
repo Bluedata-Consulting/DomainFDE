@@ -8,6 +8,17 @@ Run locally with:
     adk run v0Agent
 """
 
+from google.adk.telemetry.google_cloud import get_gcp_exporters
+from google.adk.telemetry.setup import maybe_set_otel_providers
+
+import os
+os.environ.setdefault("OTEL_SERVICE_NAME", "v0Agent")
+maybe_set_otel_providers([get_gcp_exporters(enable_cloud_tracing=True,
+                                            enable_cloud_metrics=True,
+                                            enable_cloud_logging=True)])
+
+
+
 from google.adk.agents import Agent
 
 from .prompts import INSTRUCTION
