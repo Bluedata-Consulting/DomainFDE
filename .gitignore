@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+adk-env
+Day5Build/adk-env
 __pycache__/
 *.py[codz]
 *$py.class
