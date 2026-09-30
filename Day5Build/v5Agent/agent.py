@@ -50,7 +50,7 @@ from google.adk.telemetry.google_cloud import get_gcp_exporters
 from google.adk.telemetry.setup import maybe_set_otel_providers
 
 import os
-os.environ.setdefault("OTEL_SERVICE_NAME", "v4Agent")
+os.environ.setdefault("OTEL_SERVICE_NAME", "v5Agent")
 maybe_set_otel_providers([get_gcp_exporters(enable_cloud_tracing=True,
                                             enable_cloud_metrics=True,
                                             enable_cloud_logging=True)])
@@ -72,6 +72,8 @@ from google.genai import types
 
 from . import tools as tool_module
 from .ontology_loader import lane_tables, load, prompt_core, typed_tools
+from .prompts import MERGER_INSTRUCTION, POLICY_INSTRUCTION
+from .tools.knowledge import KNOWLEDGE_TOOLS
 
 logger = logging.getLogger(__name__)
 
@@ -398,10 +400,17 @@ LANE_TOOL_NAMES: dict[str, tuple[str, ...]] = {
     ),
 }
 
+# The four database lanes. `policy` is deliberately NOT one of them: it has
+# no database tools, no ontology slice and no table allowlist, so it is built
+# separately below. Keeping it out of LANES keeps every database-lane helper
+# (tables, prompt_core slice, scoped SQL) from trying to apply to it.
 LANES: tuple[str, ...] = ("care", "delivery", "supply", "finance")
 
+# Every lane the classifier may route to, database or not.
+ALL_LANES: tuple[str, ...] = LANES + ("policy",)
+
 # state key each lane writes its finding to.
-FINDING_KEY = {lane: f"finding_{lane}" for lane in LANES}
+FINDING_KEY = {lane: f"finding_{lane}" for lane in ALL_LANES}
 
 # Tables every lane may read regardless: reference data that is a join target
 # everywhere and gives nothing away about another lane.
@@ -490,6 +499,35 @@ lane_agents: dict[str, Agent] = {
 
 
 # --------------------------------------------------------------------------
+# the policy lane
+# --------------------------------------------------------------------------
+
+# Holds the retrieval tools and NO database tools at all. This mirrors the
+# database lanes' separation and is the point of v5: the data lanes answer
+# what happened, this lane answers what the rules are, and the merger applies
+# one to the other. The database lanes get no retrieval access in return.
+POLICY_LANE_SCOPE = (
+    "policy: rules, caps, approval authority, contract terms, quality"
+    " specifications, what we are allowed to do, and whether something like"
+    " this has happened before."
+)
+
+policy_agent = Agent(
+    name="policy",
+    model=MODEL,
+    description="Answers from the policy, quality, procurement and incident documents.",
+    instruction=POLICY_INSTRUCTION + RESOLUTION_BLOCK,
+    tools=list(KNOWLEDGE_TOOLS),
+    output_key=FINDING_KEY["policy"],
+    before_tool_callback=dedup_before_tool,
+    after_tool_callback=remember_after_tool,
+    after_model_callback=_log_usage,
+)
+
+lane_agents["policy"] = policy_agent
+
+
+# --------------------------------------------------------------------------
 # capture / resolve
 # --------------------------------------------------------------------------
 
@@ -530,6 +568,13 @@ You route a business question to the lanes that must investigate it. The
 lanes are:
 
 {chr(10).join(f"- {lane}: {LANE_SCOPES[lane].split('.')[0].removeprefix('YOUR LANE: ')}" for lane in LANES)}
+- {POLICY_LANE_SCOPE}
+
+Route to policy IN ADDITION to a data lane whenever a question asks what we
+may offer, what we are allowed to do, what the rule is, whether something
+breached a term, or whether there is precedent. Those questions need both the
+facts and the rule. A question that is purely about a rule needs policy
+alone.
 
 Pick EVERY lane whose tools are needed. Most questions need one. A question
 with two intents ("why was it late, and what do we owe them?") needs two or
@@ -566,9 +611,9 @@ async def classify(ctx: Context) -> str:
     question = ctx.state.get("question", "")
 
     verdict = await ctx.run_node(classifier, node_input=question)
-    chosen = [lane for lane in _parse_json_array(_as_text(verdict)) if lane in LANES]
+    chosen = [lane for lane in _parse_json_array(_as_text(verdict)) if lane in ALL_LANES]
     # De-duplicate while keeping the graph's lane order deterministic.
-    chosen = [lane for lane in LANES if lane in chosen]
+    chosen = [lane for lane in ALL_LANES if lane in chosen]
 
     if not chosen:
         # Unparseable or empty: run every lane rather than silently dropping
@@ -577,7 +622,7 @@ async def classify(ctx: Context) -> str:
             "classify: could not read a lane list from %r -- running all lanes",
             _as_text(verdict)[:200],
         )
-        chosen = list(LANES)
+        chosen = list(ALL_LANES)
 
     ctx.state["lanes"] = chosen
     ctx.state["arrived"] = []
@@ -599,7 +644,7 @@ async def classify(ctx: Context) -> str:
 @node(name="join")
 async def join(ctx: Context, node_input: Any = None) -> str:
     """Wait for every lane classify actually chose, then release the merger."""
-    selected = list(ctx.state.get("lanes") or LANES)
+    selected = list(ctx.state.get("lanes") or ALL_LANES)
     arrived = list(ctx.state.get("arrived") or [])
     arrived.append(len(arrived))
     ctx.state["arrived"] = arrived
@@ -671,40 +716,6 @@ def create_case_action(
         ),
     }
 
-
-MERGER_INSTRUCTION = """
-You are the analyst who answers the business. Several lanes have each
-investigated the question with their own tools, and their findings are below.
-You have no data tools of your own: use ONLY what the findings contain. If
-they do not establish something, you do not know it.
-
-KEEP DISTINCT CAUSES DISTINCT
-Do not blend two problems into one explanation. Two things can go wrong at
-the same time for unrelated reasons -- a late parcel and a short lot are two
-findings, not one story. If the lanes point at different causes, report them
-as separate causes, each with the ids and the lane that found it. Only join
-them into one explanation if a finding actually shows the link; if you are
-inferring the link, say that you are inferring it.
-
-If the lanes disagree, say so and give both readings. Do not average them and
-do not pick the tidier one. If a lane reported an unresolved ambiguity (two
-people matching a name, for example), carry it through to your answer and ask
-which was meant.
-
-PROPOSING A GESTURE
-If the findings justify offering the customer something, call
-`create_case_action` to propose it. You may propose; you may not act. Never
-write "I have issued", "a credit has been applied", or anything else implying
-the money has moved -- say it has been proposed for approval. The goodwill
-caps in the ontology are ceilings, not defaults, and a tier does not entitle
-a customer to its cap.
-
-ANSWERING
-- Attribute each claim to the lane and the ids behind it.
-- Say which lanes ran and over what date range.
-- If the findings do not answer the question, say so plainly.
-- Keep it short and in business language, with the numbers that matter.
-"""
 
 merger = Agent(
     name="merger",
@@ -804,7 +815,7 @@ async def authority(ctx: Context) -> str:
 # --------------------------------------------------------------------------
 
 root_agent = Workflow(
-    name="v4",
+    name="v5",
     description=(
         "Answers questions about Meridian Roasters by fanning out to the"
         " business lanes a question needs, then merging their findings."
@@ -813,8 +824,8 @@ root_agent = Workflow(
         (START, capture),
         (capture, resolve_node),
         (resolve_node, classify),
-        (classify, {lane: lane_agents[lane] for lane in LANES}),
-        (tuple(lane_agents[lane] for lane in LANES), join),
+        (classify, {lane: lane_agents[lane] for lane in ALL_LANES}),
+        (tuple(lane_agents[lane] for lane in ALL_LANES), join),
         (join, {"ready": merger}),
         (merger, authority),
     ],

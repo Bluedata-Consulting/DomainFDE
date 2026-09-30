@@ -231,6 +231,29 @@ def typed_tools(raw_tools: list[Callable]) -> list[Callable]:
     return wrapped
 
 
+def _documents() -> dict:
+    """The document registry, or an empty dict for an ontology without one."""
+    return load().get("documents", {}) or {}
+
+
+@lru_cache(maxsize=1)
+def document_terms() -> tuple[tuple[str, str], ...]:
+    """(term, doc_id) for every phrase a document declares it governs.
+
+    Longest first, so 'goodwill cap' is recognised before 'goodwill'.
+    """
+    pairs: list[tuple[str, str]] = []
+    for doc_id, spec in _documents().items():
+        for key in ("governs", "terms"):
+            for term in spec.get(key) or []:
+                pairs.append((str(term).lower().strip(), doc_id))
+    # De-duplicate, keeping the first document that claims a term.
+    seen: dict[str, str] = {}
+    for term, doc_id in pairs:
+        seen.setdefault(term, doc_id)
+    return tuple(sorted(seen.items(), key=lambda kv: -len(kv[0])))
+
+
 # ------------------------------------------------------------- 3. resolve
 
 
@@ -380,6 +403,31 @@ def resolve(question: str) -> str:
     ]
     if synonym_lines:
         sections.append("HOUSE SPELLING\n" + "\n".join(synonym_lines))
+
+    # -- document-governed terms ------------------------------------------
+    # This is what tells the router a question needs the policy lane: the
+    # ontology's own policy block is a summary of MR-CC-POL-004 and omits the
+    # conditions and uplifts, so a question touching these terms must be
+    # answered from the document, not from this file.
+    policy_lines: list[str] = []
+    claimed: set[str] = set()
+    for term, doc_id in document_terms():
+        if doc_id in claimed or not _mentions(term):
+            continue
+        claimed.add(doc_id)
+        if doc_id == "MR-CC-POL-004":
+            policy_lines.append(
+                f"  - '{term}' is governed by {doc_id}. The ontology's policy "
+                "block is a summary only -- retrieve the document before deciding."
+            )
+        else:
+            title = _documents()[doc_id].get("title", doc_id)
+            policy_lines.append(
+                f"  - '{term}' is governed by {doc_id} ({title}). Retrieve the "
+                "document rather than reasoning from the database alone."
+            )
+    if policy_lines:
+        sections.append("POLICY TERM\n" + "\n".join(policy_lines))
 
     if not sections:
         return (

@@ -496,6 +496,18 @@ metrics:
 # ---------------------------------------------------------------------------
 
 policy:
+  # 3b -- this block is a LOSSY SUMMARY of MR-CC-POL-004.
+  # The key names below are deliberately unchanged: v2Agent, v3Agent and
+  # v4Agent all read policy["goodwill_caps"] and
+  # policy["human_approval_required_above"], and v4's authority gate depends
+  # on them. New metadata is added alongside rather than renaming anything.
+  authoritative_source: MR-CC-POL-004
+  completeness: summary
+  note: >
+    These are the STANDARD caps only. Conditions, attribution-based uplifts
+    and the Relationship Recovery Allowance live in MR-CC-POL-004 section 7
+    and are NOT represented here. Never decide a remedy from this block
+    alone -- retrieve section 7 first and check whether an uplift applies.
   currency: USD
   goodwill_caps:
     d2c:
@@ -516,6 +528,54 @@ policy:
       refund has been made unless a Refund row already exists.
 
 # ---------------------------------------------------------------------------
+# 4b. DOCUMENTS -- the authoritative sources the database cannot hold.
+#     The database says what happened; these say what the rules are, what
+#     should have happened, and what happened last time. `governs` and
+#     `terms` are what the resolver matches a question against to decide
+#     that it needs the policy lane.
+# ---------------------------------------------------------------------------
+
+documents:
+  MR-CC-POL-004:
+    title: Customer Care Remedy & Goodwill Policy
+    version: "4.0"
+    effective: 2025-11-01
+    owner: Director of Customer Experience
+    governs: [remedy, goodwill, refund, credit, approval authority,
+              customer tier, attribution, cross-currency]
+    terms: [attribution, company-attributable, third-party-attributable,
+            uplift, goodwill cap, approval threshold, relationship recovery,
+            remedy band, goodwill credit, authorise, authorisation,
+            sign off, tier cap, statutory remedy]
+  MR-QA-STD-002:
+    title: Green Coffee Quality Standards & Roasting QA Manual
+    version: "2.3"
+    effective: 2025-09-01
+    owner: Head of Quality
+    governs: [cupping score, blend specification, substitution,
+              lot release, notification obligation, traceability]
+    terms: [substitution, score delta, notification obligation, cupping score,
+            specification, base spec, lot release, blend spec, qa hold,
+            quality standard, sensory, defect count]
+  MR-PROC-HB-003:
+    title: Supplier Agreements & Procurement Handbook
+    version: "3.0"
+    effective: 2025-07-01
+    owner: Head of Procurement
+    governs: [contract terms, lead time tolerance, force majeure,
+              supplier breach, supplier review, termination]
+    terms: [force majeure, carve-out, tolerance, breach, supplier review,
+            termination, sole source, contract term, penalty, remediation,
+            lead time tolerance, port congestion]
+  MR-OPS-PM-ARCHIVE:
+    title: Incident Post-Mortem Archive
+    owner: Operations
+    governs: [past incidents, root cause history, open action items,
+              precedent]
+    terms: [post-mortem, postmortem, action item, precedent, past incident,
+            happened before, root cause history, recurrence, lesson learned]
+
+# ---------------------------------------------------------------------------
 # 5. TOOLS -- which entity each tool serves, and where each parameter's
 #    values legally come from
 # ---------------------------------------------------------------------------
@@ -534,7 +594,10 @@ tools:
   get_customer_360:
     entity: Customer
     params:
-      customer_id: {from: Customer.customer_id, required: true}
+      # many: the tool takes a list of ids and answers them in one call, so a
+      # model holding N ids spends one turn, not N. Loaders that predate this
+      # key ignore it and still see a single id, so v2/v3 are unaffected.
+      customer_id: {from: Customer.customer_id, required: true, many: true}
 
   find_wholesale_contacts:
     entity: WholesaleContact
@@ -555,12 +618,12 @@ tools:
   get_sales_order_detail:
     entity: SalesOrder
     params:
-      sales_order_id: {from: SalesOrder.sales_order_id, required: true}
+      sales_order_id: {from: SalesOrder.sales_order_id, required: true, many: true}
 
   get_shipment_status:
     entity: Shipment
     params:
-      sales_order_id: {from: SalesOrder.sales_order_id, required: true}
+      sales_order_id: {from: SalesOrder.sales_order_id, required: true, many: true}
 
   find_late_shipments:
     entity: Shipment
@@ -583,7 +646,7 @@ tools:
   get_ticket_thread:
     entity: Ticket
     params:
-      ticket_id: {from: Ticket.ticket_id, required: true}
+      ticket_id: {from: Ticket.ticket_id, required: true, many: true}
 
   ticket_trend:
     entity: Ticket

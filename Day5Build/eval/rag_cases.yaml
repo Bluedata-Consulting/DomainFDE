@@ -1,0 +1,1058 @@
+# GENERATED FIELDS: truth, expect_all, naive[].value, alt[].value, facts[].value
+# are written by eval/derive_truth.py from the SQL stored beside them. Do not
+# edit them by hand -- edit the SQL and re-run the script. Everything else in
+# this file is hand-authored. See meta.* for the vocabulary used below.
+
+meta:
+  dataset: meridian-agent-ladder
+  file: rag_cases.yaml
+  rungs_covered: V5
+  as_of: '2026-03-16'
+  database: data/roastery.db
+  corpus: data/EnterpriseKnoweledge/*.pdf
+  derived_by: eval/derive_truth.py
+  provenance: Every rule was read off the cited PDF page (the PDFs have no text layer; pages
+    were checked as rendered images and the quotes are re-verified against the page transcription
+    on every run). Every database fact is the result of the SQL stored beside it. No agent,
+    prompt or tool source was read.
+  fields:
+    must_retrieve: '[{doc, section}] passages that MUST appear in the retrieved set'
+    must_not_retrieve: '[{doc, section}] superseded or near-miss passages; retrieving one
+      is not a failure by itself, USING it is'
+    requires_docs: document codes the answer needs; more than one means cross-document
+    requires_db: true when a database fact is needed as well as a rule
+    scoring: scored (partial credit per assertion) or pass_fail (adversarial)
+  section_ids: 'Sections are named as in the documents: ''7.3'', ''Appendix B''. The post-mortem
+    archive is sectioned by incident id (''INC-2024-11''); its consolidated open-items table
+    sits at the end of the ''INC-2025-12'' section.'
+  failure_classes:
+    retrieval: a required passage not retrieved
+    superseded: a no-longer-in-force rule applied
+    citation: a rule stated without, or with the wrong, source
+    ungrounded: an answer the retrieved text does not support (including out-of-corpus invention)
+    near_miss: a rule applied outside its stated scope
+    partial_conditions: a multi-condition clause applied when only some conditions hold
+    currency: currencies compared or summed without conversion
+    authority: approval requirements omitted or misstated
+cases:
+- id: R01
+  category: rule_lookup
+  tier: B
+  q: Who has to sign off a 400 dollar goodwill remedy?
+  expected_pass_from: V5
+  truth: Customer care supervisor
+  source:
+    doc: MR-CC-POL-004
+    version: '4.0'
+    section: '6'
+    page: 4
+    quote: 151 to 500 | Customer care supervisor
+  must_retrieve:
+  - doc: MR-CC-POL-004
+    section: '6'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: scored
+  assertions:
+  - names the customer care supervisor
+  - does not say an agent can approve it alone (the 150 line)
+  check:
+  - answer_contains_text
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - authority
+- id: R02
+  category: rule_lookup
+  tier: B
+  q: What's the minimum cupping score for the base component of Cascadia Blend?
+  expected_pass_from: V5
+  truth: 84.0
+  source:
+    doc: MR-QA-STD-002
+    version: '2.3'
+    section: '3.1'
+    page: 2
+    quote: Minimum cupping score, base component | 84.0
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '3.1'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  requires_db: false
+  scoring: scored
+  trap: 83.0 (secondary component), 80.0 (balance) and the 82.0/86.0 base minimums of other
+    products in 3.2 are all nearby numbers.
+  check:
+  - answer_contains_number
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - citation
+- id: R03
+  category: rule_lookup
+  tier: B
+  q: What lead time and tolerance have we contracted with Kochere Cooperative?
+  expected_pass_from: V5
+  truth:
+    contracted_lead_time_days: 55
+    tolerance_days: 10
+  sources:
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '3.2'
+    page: 3
+    quote: Contracted lead time | 55 days
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '3.2'
+    page: 3
+    quote: Tolerance | ± 10 days
+  must_retrieve:
+  - doc: MR-PROC-HB-003
+    section: '3.2'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-PROC-HB-003
+  requires_db: false
+  scoring: scored
+  check:
+  - answer_contains_number
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R04
+  category: rule_lookup
+  tier: B
+  q: How long can green coffee sit in the silo before it has to be re-cupped?
+  expected_pass_from: V5
+  truth: nine months from intake
+  source:
+    doc: MR-QA-STD-002
+    version: '2.3'
+    section: '4'
+    page: 3
+    quote: A lot that has been in the silo more than nine months from intake must be re-cupped
+      before use.
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '4'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  requires_db: false
+  scoring: scored
+  check:
+  - answer_contains_text
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R05
+  category: rule_lookup
+  tier: B
+  q: If a silver-tier customer's problem was our own fault, what's the most goodwill we can
+    give them?
+  expected_pass_from: V5
+  truth: 120
+  source:
+    doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.3'
+    page: 5
+    quote: D2C silver | 50 | 120
+  must_retrieve:
+  - doc: MR-CC-POL-004
+    section: '7.3'
+  must_not_retrieve:
+  - doc: MR-CC-POL-004
+    section: Appendix B
+  requires_docs:
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: scored
+  trap: 50 is the standard silver cap (5.1); 40 is the superseded v3.1 silver cap.
+  check:
+  - answer_contains_number
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - superseded
+- id: R06
+  category: cross_document
+  tier: B
+  q: Finca La Esperanza's container was held up by port congestion at Cartagena. Is that force
+    majeure, and does it change how we treat the customers who got the substitute coffee?
+  expected_pass_from: V5
+  truth: 'Not force majeure: the 9.2 carve-out excludes load-port congestion and missed sailings
+    for SUP-01, so the delay is a breach. It does not change the customer side: a supply failure
+    that is the supplier''s fault contractually is still company-attributable for customer
+    remedy, so the 7.3 uplift applies.'
+  sources:
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '9.2'
+    page: 7
+    quote: Applies to Finca La Esperanza (SUP-01) and Lintong Highlands (SUP-04) only.
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '9.3'
+    page: 7
+    quote: A supply failure that is contractually the supplier's fault may still be company-attributable
+      for customer remedy
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.1'
+    page: 5
+    quote: or a procurement failure that propagated into the product
+  must_retrieve:
+  - doc: MR-PROC-HB-003
+    section: '9.2'
+  - doc: MR-PROC-HB-003
+    section: '9.3'
+  - doc: MR-CC-POL-004
+    section: '7.1'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-PROC-HB-003
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: scored
+  assertions:
+  - says it is not force majeure, citing the 9.2 carve-out for SUP-01
+  - says the customer-facing attribution is company-attributable regardless (9.3, 7.1)
+  - keeps the liability question and the attribution question separate
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - near_miss
+- id: R07
+  category: cross_document
+  tier: B
+  q: Could we have used a lot scoring 79.5 as the Cascadia base if the Head of Quality had
+    signed it off in writing?
+  expected_pass_from: V5
+  truth: 'No. Below 80.0 is the Reject band: it may not be used in any blend regardless of
+    authority. The lot should have been quarantined and rejected outright with a supplier
+    claim, not negotiated into a blend.'
+  sources:
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '5.3'
+    page: 4
+    quote: A substitute scoring below 80.0 is in the Reject band under §2.2 and may not be
+      used in any blend regardless of authority.
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '2.2'
+    page: 1
+    quote: Reject | Below 80.0 | Not released. Quarantine and supplier claim under MR-PROC-HB-003
+      §7
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '5'
+    page: 6
+    quote: A lot in the Reject band under MR-QA-STD-002 §2.2 is rejected outright
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '5.3'
+  - doc: MR-PROC-HB-003
+    section: '5'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  - MR-PROC-HB-003
+  requires_db: false
+  scoring: scored
+  trap: '5.2''s authority table ("Head of Quality, in writing" for a base component) looks
+    like the answer and is not: authority cannot rescue a Reject-band lot. Also note the QA
+    manual points supplier claims at PROC-HB-003 section 7, but the quality-claims rule is
+    section 5 (7 is counterclaims); an answer citing section 5 is correct.'
+  assertions:
+  - answers no, because 79.5 is in the Reject band
+  - says no authority, including the Head of Quality in writing, can permit it
+  - says a Reject-band lot is quarantined and rejected with a supplier claim
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - near_miss
+  - retrieval
+- id: R08
+  category: cross_document
+  tier: B
+  q: What did we change in our policies after the Belawan port closure incident?
+  expected_pass_from: V5
+  truth: 'INC-2024-11 produced: the QA customer notification obligation (QA 5.4, v2.3) and
+    Head-of-Quality authority for base substitutions (QA 5.2); the sole-source review trigger
+    lowered to two breaches (PROC 11.1, v2.1); the port-congestion carve-out extended to Lintong
+    at its 2025 renewal (PROC 9.2); and the company-attributable uplift in the remedy policy
+    (CC 7.3), after customers were found under-remedied.'
+  sources:
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2024-11
+    page: 4
+    quote: Closed Sep 2025 — issued as MR-QA-STD-002 v2.3 §5.4
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '11'
+    page: 7
+    quote: §5.4 customer notification obligation added following INC-2024-11
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '12'
+    page: 9
+    quote: Sole-source review trigger introduced at §11.1 following INC-2024-11
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '3.4'
+    page: 4
+    quote: consequence of INC-2024-11
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2024-11
+    page: 4
+    quote: which is the finding that eventually produced §7.3 of the remedy policy
+  must_retrieve:
+  - doc: MR-OPS-PM-ARCHIVE
+    section: INC-2024-11
+  - doc: MR-QA-STD-002
+    section: '5.4'
+  - doc: MR-PROC-HB-003
+    section: '11.1'
+  - doc: MR-PROC-HB-003
+    section: '9.2'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-OPS-PM-ARCHIVE
+  - MR-QA-STD-002
+  - MR-PROC-HB-003
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: scored
+  assertions:
+  - identifies the incident as INC-2024-11 (Nightwatch substitution)
+  - names the QA notification obligation (5.4)
+  - names the sole-source review trigger (11.1)
+  - names the Lintong port-congestion carve-out (9.2)
+  - names the remedy-policy uplift (7.3)
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - citation
+- id: R09
+  category: cross_document
+  tier: B
+  q: A customer's quality complaint can't be traced back to a green lot because the batch
+    record is missing. How should we remedy it?
+  expected_pass_from: V5
+  truth: A broken traceability chain means the complaint cannot be attributed, and an unattributable
+    quality complaint is treated as company-attributable (mixed or undetermined) -- so the
+    uplifted band in 7.3 applies and the case is flagged for root-cause review.
+  sources:
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '9'
+    page: 6
+    quote: an unattributable quality complaint is treated as company-attributable
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.1'
+    page: 5
+    quote: The case must be flagged for root-cause review.
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.3'
+    page: 5
+    quote: Where attribution is company-attributable or mixed, the applicable goodwill cap
+      rises by one band
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '9'
+  - doc: MR-CC-POL-004
+    section: '7.1'
+  - doc: MR-CC-POL-004
+    section: '7.3'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: scored
+  trap: 'The intuitive answer -- no evidence, so no uplift -- is the wrong way round: the
+    policy puts the cost of our uncertainty on us.'
+  assertions:
+  - treats the case as company-attributable because attribution cannot be established
+  - applies the uplifted band, not the standard cap
+  - flags the case for root-cause review
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R10
+  category: rule_plus_db
+  tier: B
+  q: Was PO-2022 a contractual breach, and does it trigger a supplier review of Finca La Esperanza?
+  expected_pass_from: V5
+  truth: 'Yes, a breach: actual lead time exceeds the 42-day target by more than the ±7 tolerance,
+    and port congestion at Cartagena is excluded from force majeure for SUP-01, so it is not
+    relieved. No review is triggered by breach count on the records available: Finca is sole-source,
+    which needs two breaches in a rolling twelve months, and the database shows one -- the
+    step is written notice (step 1).'
+  sources:
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '3.1'
+    page: 2
+    quote: Tolerance | ± 7 days
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '4.2'
+    page: 5
+    quote: Variance is actual lead time minus contracted target.
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '9.2'
+    page: 7
+    quote: a breach, not a relieved event
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '11.1'
+    page: 8
+    quote: review is triggered by two breaches within a rolling twelve months, rather than
+      three
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '10'
+    page: 8
+    quote: First breach in rolling 12 months | Written notice, recorded on supplier record
+  facts:
+  - name: po_2022
+    sql: |
+      SELECT po.purchase_order_id, s.supplier_name, po.po_date, po.actual_arrival,
+             CAST(julianday(po.actual_arrival) - julianday(po.po_date) AS INTEGER) AS actual_days,
+             s.lead_time_days_target AS target_days,
+             CAST(julianday(po.actual_arrival) - julianday(po.po_date) AS INTEGER)
+               - s.lead_time_days_target AS variance_days,
+             ib.delay_reason
+      FROM purchase_orders po JOIN suppliers s ON s.supplier_id = po.supplier_id
+      LEFT JOIN inbound_shipments ib ON ib.purchase_order_id = po.purchase_order_id
+      WHERE po.purchase_order_id = 'PO-2022'
+    shape: row
+    value:
+      purchase_order_id: PO-2022
+      supplier_name: Finca La Esperanza
+      po_date: '2025-12-10'
+      actual_arrival: '2026-02-16'
+      actual_days: 68
+      target_days: 42
+      variance_days: 26
+      delay_reason: Port congestion at Cartagena; vessel roll-over (2 sailings missed)
+  - name: finca_breaches_last_12_months
+    sql: |
+      SELECT po.purchase_order_id,
+             CAST(julianday(po.actual_arrival) - julianday(po.po_date) AS INTEGER)
+               - s.lead_time_days_target AS variance_days
+      FROM purchase_orders po JOIN suppliers s ON s.supplier_id = po.supplier_id
+      WHERE s.supplier_id = 'SUP-01' AND po.actual_arrival IS NOT NULL
+        AND date(po.actual_arrival) >= date(:as_of, '-12 months')
+        AND julianday(po.actual_arrival) - julianday(po.po_date) - s.lead_time_days_target > 7
+    shape: rows
+    value:
+    - purchase_order_id: PO-2022
+      variance_days: 26
+  must_retrieve:
+  - doc: MR-PROC-HB-003
+    section: '3.1'
+  - doc: MR-PROC-HB-003
+    section: '9.2'
+  - doc: MR-PROC-HB-003
+    section: '11.1'
+  must_not_retrieve:
+  - doc: MR-PROC-HB-003
+    section: '11.2'
+  requires_docs:
+  - MR-PROC-HB-003
+  requires_db: true
+  scoring: scored
+  trap: '11.2 (multi-source) is the near-miss: "any single breach exceeding thirty days''
+    variance" does not apply to a sole-source supplier, and the variance is under thirty anyway.
+    Also: the variance matches the 4.3 worked example exactly; quoting the example is not
+    the same as computing from the record.'
+  assertions:
+  - computes the variance from facts.po_2022 (actual minus target) and compares it to the
+    ±7 tolerance
+  - says the delay is not relieved, because Cartagena port congestion is carved out under
+    9.2
+  - says a review is not yet triggered -- one breach in facts.finca_breaches_last_12_months
+    against a sole-source threshold of two -- and names written notice as the step
+  - notes that breaches before the database window are not visible, rather than asserting
+    there were none
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - partial_conditions
+  - near_miss
+- id: R11
+  category: rule_plus_db
+  tier: B
+  q: Did the February Cascadia substitution require us to notify customers?
+  expected_pass_from: V5
+  truth: Yes. Score delta is measured against the specification minimum (84.0); the substitute
+    lot's score gives a delta above 2.0, which makes notification mandatory before or with
+    despatch, to every customer whose order contains an affected batch, wholesale included.
+  sources:
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '5.3'
+    page: 4
+    quote: It is calculated against the specification minimum, not against the score of the
+      lot that happened to be in use last week.
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '5.4'
+    page: 4
+    quote: Where a substitution produces a score delta greater than 2.0 points against specification,
+      affected customers must be notified before or with despatch.
+  - doc: MR-QA-STD-002
+    version: '2.3'
+    section: '3.1'
+    page: 2
+    quote: Minimum cupping score, base component | 84.0
+  facts:
+  - name: substitute_lot
+    sql: |
+      SELECT DISTINCT gl.lot_id, gl.origin, gl.cupping_score,
+             ROUND(84.0 - gl.cupping_score, 1) AS delta_vs_spec_minimum
+      FROM roast_batches rb JOIN green_lots gl ON gl.lot_id = rb.lot_id
+      JOIN products p ON p.product_id = rb.product_id
+      WHERE p.name = 'Cascadia Blend' AND rb.qa_note LIKE '%ubstitut%'
+    shape: rows
+    value:
+    - lot_id: LOT-BR-0118
+      origin: Brazil
+      cupping_score: 79.5
+      delta_vs_spec_minimum: 4.5
+  - name: qa_notes
+    sql: |
+      SELECT DISTINCT qa_note FROM roast_batches WHERE qa_note LIKE '%ubstitut%'
+    shape: column
+    value:
+    - Substitute origin used -- Colombian lot unavailable (PO-2043 delayed). Cup profile flatter
+      than spec.
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '5.3'
+  - doc: MR-QA-STD-002
+    section: '5.4'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  requires_db: true
+  scoring: scored
+  assertions:
+  - computes the delta from the lot score in facts.substitute_lot against the 84.0 specification
+    minimum
+  - concludes notification was required (delta above 2.0)
+  - says it applies to wholesale accounts as well as D2C
+  - notes the batch QA note (facts.qa_notes) records neither authority, delta nor notification
+    status, which 5.5 requires
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - ungrounded
+- id: R12
+  category: rule_plus_db
+  tier: A
+  q: How many customers should have received a substitution notice for the February Cascadia
+    batches?
+  expected_pass_from: V5
+  why_rung: The rule (who must be notified) is in QA 5.4; the count is only in the database.
+    Neither source answers alone.
+  truth_sql: |
+    SELECT COUNT(DISTINCT so.customer_id)
+    FROM sales_order_lines l
+    JOIN roast_batches rb ON rb.batch_id = l.batch_id
+    JOIN products p ON p.product_id = rb.product_id
+    JOIN sales_orders so ON so.sales_order_id = l.sales_order_id
+    WHERE p.name = 'Cascadia Blend' AND rb.qa_note LIKE '%ubstitut%'
+  truth_shape: scalar
+  truth: 38
+  source:
+    doc: MR-QA-STD-002
+    version: '2.3'
+    section: '5.4'
+    page: 4
+    quote: be issued to every customer whose order contains the affected batch, including
+      wholesale accounts
+  facts:
+  - name: wholesale_accounts_affected
+    sql: |
+      SELECT COUNT(DISTINCT so.account_id)
+      FROM sales_order_lines l
+      JOIN roast_batches rb ON rb.batch_id = l.batch_id
+      JOIN products p ON p.product_id = rb.product_id
+      JOIN sales_orders so ON so.sales_order_id = l.sales_order_id
+      WHERE p.name = 'Cascadia Blend' AND rb.qa_note LIKE '%ubstitut%' AND so.account_id IS NOT NULL
+    shape: scalar
+    value: 6
+  naive:
+  - label: only customers who complained
+    sql: |
+      SELECT COUNT(DISTINCT customer_id) FROM tickets WHERE category = 'quality' AND sales_order_id IN (
+        SELECT l.sales_order_id FROM sales_order_lines l
+        JOIN roast_batches rb ON rb.batch_id = l.batch_id WHERE rb.qa_note LIKE '%ubstitut%')
+    shape: scalar
+    value: 14
+  - label: D2C only (wholesale left out)
+    sql: |
+      SELECT COUNT(DISTINCT so.customer_id)
+      FROM sales_order_lines l
+      JOIN roast_batches rb ON rb.batch_id = l.batch_id
+      JOIN products p ON p.product_id = rb.product_id
+      JOIN sales_orders so ON so.sales_order_id = l.sales_order_id
+      WHERE p.name = 'Cascadia Blend' AND rb.qa_note LIKE '%ubstitut%' AND so.channel = 'd2c'
+    shape: scalar
+    value: 32
+  must_retrieve:
+  - doc: MR-QA-STD-002
+    section: '5.4'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-QA-STD-002
+  requires_db: true
+  scoring: scored
+  check:
+  - answer_contains_number
+  - answer_excludes_naive
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+  - ungrounded
+- id: R13
+  category: rule_plus_db
+  tier: B
+  q: What's the most we could offer Rosewood for the February quality problem, and who would
+    have to approve it?
+  expected_pass_from: V5
+  truth: 'USD 1,250 (flagship, uplifted because the affected orders contain substituted batches
+    -- company-attributable). Up to 1,250 needs the Director of Customer Experience, or a
+    CX supervisor with written Finance concurrence. Rosewood is billed in CAD: convert at
+    the incident-date rate before comparing to the cap.'
+  sources:
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.3'
+    page: 5
+    quote: Wholesale flagship | 500 | 1,250
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '6'
+    page: 4
+    quote: 501 to 1,250 | Director of Customer Experience, or CX supervisor with written Finance
+      concurrence
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '8'
+    page: 6
+    quote: Use the rate published for the incident date, not the rate on the day the decision
+      is taken
+  facts:
+  - name: rosewood
+    sql: |
+      SELECT account_id, account_name, tier, currency FROM wholesale_accounts
+      WHERE account_name = 'Rosewood Coffee House'
+    shape: row
+    value:
+      account_id: ACC-001
+      account_name: Rosewood Coffee House
+      tier: flagship
+      currency: CAD
+  - name: substituted_orders
+    sql: |
+      SELECT DISTINCT so.sales_order_id, l.batch_id, rb.lot_id
+      FROM sales_orders so JOIN wholesale_accounts a ON a.account_id = so.account_id
+      JOIN sales_order_lines l ON l.sales_order_id = so.sales_order_id
+      JOIN roast_batches rb ON rb.batch_id = l.batch_id
+      WHERE a.account_name = 'Rosewood Coffee House' AND rb.qa_note LIKE '%ubstitut%'
+      ORDER BY so.sales_order_id
+    shape: rows
+    value:
+    - sales_order_id: SO-08170
+      batch_id: BAT-5336
+      lot_id: LOT-BR-0118
+    - sales_order_id: SO-08202
+      batch_id: BAT-5355
+      lot_id: LOT-BR-0118
+  - name: refunds_already_paid
+    sql: |
+      SELECT r.refund_id, r.sales_order_id, r.amount, r.currency, r.reason_code
+      FROM refunds r JOIN sales_orders so ON so.sales_order_id = r.sales_order_id
+      JOIN wholesale_accounts a ON a.account_id = so.account_id
+      WHERE a.account_name = 'Rosewood Coffee House'
+    shape: rows
+    value:
+    - refund_id: REF-00007
+      sales_order_id: SO-08202
+      amount: 1657.5
+      currency: CAD
+      reason_code: quality
+  must_retrieve:
+  - doc: MR-CC-POL-004
+    section: '7.3'
+  - doc: MR-CC-POL-004
+    section: '6'
+  must_not_retrieve:
+  - doc: MR-CC-POL-004
+    section: Appendix B
+  requires_docs:
+  - MR-CC-POL-004
+  requires_db: true
+  scoring: scored
+  trap: 500 (ontology summary, standard flagship) and 350 (Appendix B, v3.1) are the two wrong
+    ceilings. A CAD refund already paid (facts.refunds_already_paid) must not be compared
+    to a USD cap unconverted.
+  assertions:
+  - establishes attribution from the database (facts.substituted_orders), not from the complaint
+  - gives 1,250 USD as the ceiling and says it is a ceiling, not a default
+  - names the approver for the band (Director of CX, or CX supervisor with written Finance
+    concurrence)
+  - converts CAD to USD before comparing, at the incident-date rate
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - superseded
+  - currency
+  - authority
+- id: R14
+  category: institutional_memory
+  tier: B
+  q: Has a blend base substitution like this happened before? What did we learn?
+  expected_pass_from: V5
+  truth: 'Yes: INC-2024-11 (Nov 2024). A Belawan port closure forced a Guatemalan lot (81.2)
+    into Nightwatch Blend''s base across eleven batches; no customer notification was issued;
+    61 quality tickets and 14 cancellations. Lessons: notify customers, raise substitution
+    authority, measure delta properly, watch complaint rate by product, and join supply delays
+    to customer complaints early.'
+  sources:
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2024-11
+    page: 2
+    quote: eleven roast batches between 12 and 27 November
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2024-11
+    page: 3
+    quote: No customer notification was issued.
+  must_retrieve:
+  - doc: MR-OPS-PM-ARCHIVE
+    section: INC-2024-11
+  must_not_retrieve: []
+  requires_docs:
+  - MR-OPS-PM-ARCHIVE
+  requires_db: false
+  scoring: scored
+  assertions:
+  - identifies INC-2024-11 and the Nightwatch base substitution
+  - says no customer notification was issued
+  - draws at least one lesson that bears on the current Cascadia case (notification, authority,
+    complaint-rate alerting, joining the supply delay to complaints)
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R15
+  category: institutional_memory
+  tier: B
+  q: Which action items from past incidents are still open?
+  expected_pass_from: V5
+  truth:
+  - 'INC-2024-11 #3 -- automated substitution notification trigger (Engineering)'
+  - 'INC-2024-11 #4 -- complaint-rate alerting by product (CX Analytics; reporting exists,
+    alerting does not)'
+  - 'INC-2024-11 #7 -- Colombian alternate source qualification (Procurement)'
+  - 'INC-2025-12 #2 -- peak capacity for committed-window accounts (Fulfilment)'
+  sources:
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2025-12
+    page: 7
+    quote: 'INC-2024-11 #3 | Automated substitution notification trigger | Engineering | 15
+      months'
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2025-12
+    page: 7
+    quote: 'INC-2025-12 #2 | Peak capacity for committed-window accounts | Fulfilment | 3
+      months'
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2024-11
+    page: 4
+    quote: Colombian alternate not qualified.
+  must_retrieve:
+  - doc: MR-OPS-PM-ARCHIVE
+    section: INC-2025-12
+  - doc: MR-OPS-PM-ARCHIVE
+    section: INC-2024-11
+  must_not_retrieve: []
+  requires_docs:
+  - MR-OPS-PM-ARCHIVE
+  requires_db: false
+  scoring: scored
+  assertions:
+  - lists all four open items with owner
+  - does not list closed items (for example INC-2025-12
+  - notes three of the four come from INC-2024-11
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R16
+  category: institutional_memory
+  tier: B
+  q: Has Rosewood had problems with us before this February?
+  expected_pass_from: V5
+  truth: 'Yes: INC-2025-12 (Dec 2025). Four consecutive wholesale deliveries to Toronto accounts
+    missed the agreed morning window during peak; Rosewood raised it and asked whether the
+    window was contractual -- it is. The follow-up action (peak capacity for committed-window
+    accounts) is still open.'
+  sources:
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2025-12
+    page: 6
+    quote: asked whether the committed window was contractual. It is.
+  - doc: MR-OPS-PM-ARCHIVE
+    version: ''
+    section: INC-2025-12
+    page: 7
+    quote: Peak-season capacity booked in advance for committed-window accounts | Fulfilment
+      | OPEN.
+  must_retrieve:
+  - doc: MR-OPS-PM-ARCHIVE
+    section: INC-2025-12
+  must_not_retrieve: []
+  requires_docs:
+  - MR-OPS-PM-ARCHIVE
+  requires_db: false
+  scoring: scored
+  assertions:
+  - identifies INC-2025-12 and Rosewood's part in it
+  - says the committed delivery window is contractual
+  - says the related action item is still open
+  check:
+  - llm_judge
+  - citation_matches_source
+  failure_watch:
+  - retrieval
+- id: R17
+  category: adversarial_superseded
+  tier: B
+  q: A flagship café had a carrier delay last week. What's the most goodwill we can offer
+    them? It's 350, isn't it?
+  expected_pass_from: V5
+  truth: 500
+  source:
+    doc: MR-CC-POL-004
+    version: '4.0'
+    section: '5.2'
+    page: 3
+    quote: Flagship | 500
+  must_retrieve:
+  - doc: MR-CC-POL-004
+    section: '5.2'
+  must_not_retrieve:
+  - doc: MR-CC-POL-004
+    section: Appendix B
+  requires_docs:
+  - MR-CC-POL-004
+  requires_db: false
+  scoring: pass_fail
+  pass_when: 'Answers 500 and says 350 is the superseded v3.1 cap. A carrier delay is third-party,
+    so no uplift: 1,250 is also wrong.'
+  fail_when: answers 350, or 1,250, or does not correct the user's figure
+  check:
+  - answer_contains_number
+  - answer_excludes_naive
+  naive:
+  - label: superseded v3.1 flagship cap
+    value: 350
+  - label: uplift wrongly applied to a third-party cause
+    value: 1250
+  failure_watch:
+  - superseded
+- id: R18
+  category: adversarial_not_in_corpus
+  tier: B
+  q: What does MR-LEG-POL-002 say about how quickly statutory refunds have to be paid?
+  expected_pass_from: V5
+  truth: Not in the corpus. The only reference is MR-CC-POL-004 section 1, which says statutory
+    refund obligations are handled under MR-LEG-POL-002 and take precedence; it says nothing
+    about timing.
+  source:
+    doc: MR-CC-POL-004
+    version: '4.0'
+    section: '1'
+    page: 1
+    quote: It does not govern statutory refund obligations, which are handled under MR-LEG-POL-002
+  must_retrieve: []
+  must_not_retrieve: []
+  requires_docs: []
+  requires_db: false
+  scoring: pass_fail
+  pass_when: Says MR-LEG-POL-002 is not in the available documents and gives no timeline;
+    may point to the section 1 reference.
+  fail_when: states any refund timeline, or presents another document's rule as MR-LEG-POL-002's
+  check:
+  - pass_fail
+  failure_watch:
+  - ungrounded
+- id: R19
+  category: adversarial_near_miss
+  tier: B
+  q: Kochere's last container was held up by port congestion in Djibouti. That's a breach
+    under the port-congestion carve-out, right?
+  expected_pass_from: V5
+  truth: No. The 9.2 carve-out applies to SUP-01 and SUP-04 only; Kochere is standard 9.1,
+    no carve-out. Whether a delay is a breach depends on variance against its ±10 tolerance
+    and on whether force majeure relief was properly claimed -- and no Kochere purchase order
+    in the database is outside tolerance.
+  sources:
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '9.2'
+    page: 7
+    quote: Applies to Finca La Esperanza (SUP-01) and Lintong Highlands (SUP-04) only.
+  - doc: MR-PROC-HB-003
+    version: '3.0'
+    section: '3.2'
+    page: 3
+    quote: Force majeure | §9.1, standard, no carve-out
+  facts:
+  - name: kochere_worst_variance
+    sql: |
+      SELECT MAX(CAST(julianday(po.actual_arrival) - julianday(po.po_date) AS INTEGER)
+                 - s.lead_time_days_target) AS worst_variance_days,
+             COUNT(*) AS arrived_pos
+      FROM purchase_orders po JOIN suppliers s ON s.supplier_id = po.supplier_id
+      WHERE s.supplier_name = 'Kochere Cooperative' AND po.actual_arrival IS NOT NULL
+    shape: row
+    value:
+      worst_variance_days: 1
+      arrived_pos: 6
+  - name: kochere_delay_reasons
+    sql: |
+      SELECT COUNT(*) FROM inbound_shipments ib
+      JOIN purchase_orders po ON po.purchase_order_id = ib.purchase_order_id
+      WHERE po.supplier_id = 'SUP-02' AND ib.delay_reason IS NOT NULL
+    shape: scalar
+    value: 0
+  must_retrieve:
+  - doc: MR-PROC-HB-003
+    section: '9.2'
+  - doc: MR-PROC-HB-003
+    section: '3.2'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-PROC-HB-003
+  requires_db: true
+  scoring: pass_fail
+  pass_when: Says the carve-out does not apply to Kochere and that breach turns on variance
+    against ±10 days and 9.1 relief; does not confirm the premise.
+  fail_when: agrees it is a breach under the carve-out
+  check:
+  - pass_fail
+  failure_watch:
+  - near_miss
+- id: R20
+  category: adversarial_partial_conditions
+  tier: B
+  q: Can we offer Rosewood a Relationship Recovery Allowance?
+  expected_pass_from: V5
+  truth: 'Not on the current record. 7.4 needs all three: (1) company-attributable or mixed
+    -- met, the orders contain substituted batches; (2) two or more separate incidents in
+    a rolling sixty days -- arguable on the record; (3) a written or recorded intention to
+    review, reduce or terminate the relationship -- not met: the ticket messages complain
+    but do not say so. Without (3) no RRA; the uplifted flagship cap under 7.3 still applies.'
+  sources:
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.4'
+    page: 5
+    quote: For flagship wholesale accounts where all of the following hold
+  - doc: MR-CC-POL-004
+    version: '4.0'
+    section: '7.4'
+    page: 6
+    quote: the account has expressed, in writing or on a recorded call, an intention to review,
+      reduce or terminate the relationship
+  facts:
+  - name: rosewood_customer_messages
+    sql: |
+      SELECT t.ticket_id, t.status, m.sent_at, m.body
+      FROM ticket_messages m JOIN tickets t ON t.ticket_id = m.ticket_id
+      JOIN customers c ON c.customer_id = t.customer_id
+      JOIN wholesale_accounts a ON a.account_id = c.account_id
+      WHERE a.account_name = 'Rosewood Coffee House' AND m.author = 'customer'
+      ORDER BY m.sent_at
+    shape: rows
+    value:
+    - ticket_id: TKT-00281
+      status: resolved
+      sent_at: '2026-02-24 09:00:00'
+      body: We have had complaints two weeks running. This is affecting our bar.
+    - ticket_id: TKT-00282
+      status: resolved
+      sent_at: '2026-03-02 09:00:00'
+      body: We have had complaints two weeks running. This is affecting our bar.
+    - ticket_id: TKT-00012
+      status: resolved
+      sent_at: '2026-03-07 09:00:00'
+      body: We have had complaints from our customers about the espresso this month.
+    - ticket_id: TKT-00283
+      status: escalated
+      sent_at: '2026-03-08 09:00:00'
+      body: We have had complaints two weeks running. This is affecting our bar.
+  - name: substituted_orders
+    sql: |
+      SELECT DISTINCT so.sales_order_id FROM sales_orders so
+      JOIN wholesale_accounts a ON a.account_id = so.account_id
+      JOIN sales_order_lines l ON l.sales_order_id = so.sales_order_id
+      JOIN roast_batches rb ON rb.batch_id = l.batch_id
+      WHERE a.account_name = 'Rosewood Coffee House' AND rb.qa_note LIKE '%ubstitut%'
+    shape: column
+    value:
+    - SO-08170
+    - SO-08202
+  must_retrieve:
+  - doc: MR-CC-POL-004
+    section: '7.4'
+  must_not_retrieve: []
+  requires_docs:
+  - MR-CC-POL-004
+  requires_db: true
+  scoring: pass_fail
+  pass_when: Walks all three conditions, finds (3) unmet on the written record (facts.rosewood_customer_messages),
+    and does not offer an RRA -- while noting the uplifted cap still applies.
+  fail_when: Offers or recommends an RRA, or treats the escalation itself (or the case brief's
+    "hinting at leaving") as the written intention the clause requires.
+  check:
+  - pass_fail
+  failure_watch:
+  - partial_conditions

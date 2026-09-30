@@ -1,0 +1,502 @@
+{
+  "kind": "rag",
+  "version": "v5",
+  "layers": {
+    "retrieval": {
+      "ran_at": "2026-09-28T17:00:35+00:00",
+      "mode": "hybrid",
+      "k": 5,
+      "llm_calls": 0,
+      "mode_note": "",
+      "summary": {
+        "recall_at_5": 0.623,
+        "precision_at_5": 0.2,
+        "mrr": 0.662,
+        "scored_cases": 19,
+        "hard_fails": [],
+        "errors": []
+      },
+      "cases": [
+        {
+          "id": "R01",
+          "category": "rule_lookup",
+          "k": 5,
+          "retrieved": [
+            "MR-CC-POL-004 §5",
+            "MR-CC-POL-004 §4",
+            "MR-CC-POL-004 §1",
+            "MR-CC-POL-004 §2",
+            "MR-PROC-HB-003 §10"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §6"
+          ],
+          "missed": [
+            "MR-CC-POL-004 §6"
+          ],
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.616
+        },
+        {
+          "id": "R02",
+          "category": "rule_lookup",
+          "k": 5,
+          "retrieved": [
+            "MR-QA-STD-002 §3.1",
+            "MR-QA-STD-002 §5.3",
+            "MR-QA-STD-002 §2.2",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §3.3"
+          ],
+          "must_retrieve": [
+            "MR-QA-STD-002 §3.1"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.625
+        },
+        {
+          "id": "R03",
+          "category": "rule_lookup",
+          "k": 5,
+          "retrieved": [
+            "MR-PROC-HB-003 §3.2",
+            "MR-PROC-HB-003 §3.3",
+            "MR-PROC-HB-003 §4.3",
+            "MR-PROC-HB-003 §3.4",
+            "MR-PROC-HB-003 §3.1"
+          ],
+          "must_retrieve": [
+            "MR-PROC-HB-003 §3.2"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.656
+        },
+        {
+          "id": "R04",
+          "category": "rule_lookup",
+          "k": 5,
+          "retrieved": [
+            "MR-QA-STD-002 §4",
+            "MR-QA-STD-002 §2.1",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §1",
+            "MR-QA-STD-002 §10"
+          ],
+          "must_retrieve": [
+            "MR-QA-STD-002 §4"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.641
+        },
+        {
+          "id": "R05",
+          "category": "rule_lookup",
+          "k": 5,
+          "retrieved": [
+            "MR-CC-POL-004 §4",
+            "MR-CC-POL-004 §7.3",
+            "MR-CC-POL-004 §5",
+            "MR-CC-POL-004 §6",
+            "MR-CC-POL-004 §7.1"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §7.3"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 0.5,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.668
+        },
+        {
+          "id": "R06",
+          "category": "cross_document",
+          "k": 5,
+          "retrieved": [
+            "MR-PROC-HB-003 §9.2",
+            "MR-PROC-HB-003 §3.1",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §3.4",
+            "MR-QA-STD-002 §5.4"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §7.1",
+            "MR-PROC-HB-003 §9.2",
+            "MR-PROC-HB-003 §9.3"
+          ],
+          "missed": [
+            "MR-CC-POL-004 §7.1",
+            "MR-PROC-HB-003 §9.3"
+          ],
+          "recall_at_k": 0.333,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.644
+        },
+        {
+          "id": "R07",
+          "category": "cross_document",
+          "k": 5,
+          "retrieved": [
+            "MR-QA-STD-002 §5.3",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §3.1",
+            "MR-QA-STD-002 §5.2",
+            "MR-QA-STD-002 §4"
+          ],
+          "must_retrieve": [
+            "MR-PROC-HB-003 §5",
+            "MR-QA-STD-002 §5.3"
+          ],
+          "missed": [
+            "MR-PROC-HB-003 §5"
+          ],
+          "recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.79
+        },
+        {
+          "id": "R08",
+          "category": "cross_document",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §9.2",
+            "MR-PROC-HB-003 §3.4",
+            "MR-CC-POL-004 §7.1",
+            "MR-PROC-HB-003 §2"
+          ],
+          "must_retrieve": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §11.1",
+            "MR-PROC-HB-003 §9.2",
+            "MR-QA-STD-002 §5.4"
+          ],
+          "missed": [
+            "MR-PROC-HB-003 §11.1",
+            "MR-QA-STD-002 §5.4"
+          ],
+          "recall_at_k": 0.5,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.672
+        },
+        {
+          "id": "R09",
+          "category": "cross_document",
+          "k": 5,
+          "retrieved": [
+            "MR-CC-POL-004 §7.2",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §5.5",
+            "MR-QA-STD-002 §9",
+            "MR-QA-STD-002 §4"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §7.1",
+            "MR-CC-POL-004 §7.3",
+            "MR-QA-STD-002 §9"
+          ],
+          "missed": [
+            "MR-CC-POL-004 §7.1",
+            "MR-CC-POL-004 §7.3"
+          ],
+          "recall_at_k": 0.333,
+          "precision_at_k": 0.2,
+          "mrr": 0.25,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.648
+        },
+        {
+          "id": "R10",
+          "category": "rule_plus_db",
+          "k": 5,
+          "retrieved": [
+            "MR-PROC-HB-003 §3.1",
+            "MR-PROC-HB-003 §10",
+            "MR-PROC-HB-003 §9.2",
+            "MR-PROC-HB-003 §11.3",
+            "MR-PROC-HB-003 §4.2"
+          ],
+          "must_retrieve": [
+            "MR-PROC-HB-003 §11.1",
+            "MR-PROC-HB-003 §3.1",
+            "MR-PROC-HB-003 §9.2"
+          ],
+          "missed": [
+            "MR-PROC-HB-003 §11.1"
+          ],
+          "recall_at_k": 0.667,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.612
+        },
+        {
+          "id": "R11",
+          "category": "rule_plus_db",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §3.1",
+            "MR-QA-STD-002 §5.4",
+            "MR-QA-STD-002 §10",
+            "MR-QA-STD-002 §5.1"
+          ],
+          "must_retrieve": [
+            "MR-QA-STD-002 §5.3",
+            "MR-QA-STD-002 §5.4"
+          ],
+          "missed": [
+            "MR-QA-STD-002 §5.3"
+          ],
+          "recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.333,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.592
+        },
+        {
+          "id": "R12",
+          "category": "rule_plus_db",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §3.1",
+            "MR-OPS-PM-ARCHIVE §INC-2024-03",
+            "MR-QA-STD-002 §10",
+            "MR-QA-STD-002 §5.1"
+          ],
+          "must_retrieve": [
+            "MR-QA-STD-002 §5.4"
+          ],
+          "missed": [
+            "MR-QA-STD-002 §5.4"
+          ],
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.597
+        },
+        {
+          "id": "R13",
+          "category": "rule_plus_db",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §5",
+            "MR-OPS-PM-ARCHIVE §INC-2024-03",
+            "MR-QA-STD-002 §10",
+            "MR-PROC-HB-003 §7"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §6",
+            "MR-CC-POL-004 §7.3"
+          ],
+          "missed": [
+            "MR-CC-POL-004 §6",
+            "MR-CC-POL-004 §7.3"
+          ],
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.649
+        },
+        {
+          "id": "R14",
+          "category": "institutional_memory",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-QA-STD-002 §5.1",
+            "MR-QA-STD-002 §10",
+            "MR-QA-STD-002 §3.1",
+            "MR-QA-STD-002 §5"
+          ],
+          "must_retrieve": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.72
+        },
+        {
+          "id": "R15",
+          "category": "institutional_memory",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-03",
+            "MR-OPS-PM-ARCHIVE §INC-2025-12",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-OPS-PM-ARCHIVE §INC-2025-09",
+            "MR-OPS-PM-ARCHIVE §INC-2025-04"
+          ],
+          "must_retrieve": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-OPS-PM-ARCHIVE §INC-2025-12"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 0.5,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.784
+        },
+        {
+          "id": "R16",
+          "category": "institutional_memory",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2025-12",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-OPS-PM-ARCHIVE §INC-2024-03",
+            "MR-OPS-PM-ARCHIVE §INC-2025-09",
+            "MR-PROC-HB-003 §11.1"
+          ],
+          "must_retrieve": [
+            "MR-OPS-PM-ARCHIVE §INC-2025-12"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.872
+        },
+        {
+          "id": "R17",
+          "category": "adversarial_superseded",
+          "k": 5,
+          "retrieved": [
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-OPS-PM-ARCHIVE §INC-2024-03",
+            "MR-CC-POL-004 §4",
+            "MR-OPS-PM-ARCHIVE §INC-2025-12",
+            "MR-CC-POL-004 §10"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §5.2"
+          ],
+          "missed": [
+            "MR-CC-POL-004 §5.2"
+          ],
+          "recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.702
+        },
+        {
+          "id": "R18",
+          "category": "adversarial_not_in_corpus",
+          "k": 5,
+          "retrieved": [
+            "MR-CC-POL-004 §1",
+            "MR-CC-POL-004 §5.3",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-CC-POL-004 §9",
+            "MR-CC-POL-004 §4"
+          ],
+          "must_retrieve": [],
+          "missed": [],
+          "recall_at_k": null,
+          "precision_at_k": null,
+          "mrr": null,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.971
+        },
+        {
+          "id": "R19",
+          "category": "adversarial_near_miss",
+          "k": 5,
+          "retrieved": [
+            "MR-PROC-HB-003 §9.2",
+            "MR-OPS-PM-ARCHIVE §INC-2024-11",
+            "MR-PROC-HB-003 §3.2",
+            "MR-PROC-HB-003 §4.2",
+            "MR-OPS-PM-ARCHIVE §INC-2024-03"
+          ],
+          "must_retrieve": [
+            "MR-PROC-HB-003 §3.2",
+            "MR-PROC-HB-003 §9.2"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.587
+        },
+        {
+          "id": "R20",
+          "category": "adversarial_partial_conditions",
+          "k": 5,
+          "retrieved": [
+            "MR-CC-POL-004 §7.4",
+            "MR-CC-POL-004 §1",
+            "MR-OPS-PM-ARCHIVE §INC-2025-12",
+            "MR-CC-POL-004 §7",
+            "MR-CC-POL-004 §4"
+          ],
+          "must_retrieve": [
+            "MR-CC-POL-004 §7.4"
+          ],
+          "missed": [],
+          "recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "superseded_leakage": [],
+          "hard_fail": false,
+          "latency_s": 2.614
+        }
+      ],
+      "filters": {
+        "cases": null
+      }
+    }
+  }
+}

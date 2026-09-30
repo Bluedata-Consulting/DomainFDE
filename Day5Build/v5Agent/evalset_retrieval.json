@@ -1,0 +1,78 @@
+{
+  "name": "v5 retrieval eval set",
+  "description": "Eight queries, each targeting one specific retrieval failure mode. Run after build_index.py. Every expectation is checkable against the documents; 'must_cite' is the minimum citation the answer has to carry, and 'must_not' is the wrong answer each query is designed to catch.",
+  "queries": [
+    {
+      "id": "R1",
+      "query": "What's the goodwill cap for a gold customer?",
+      "targets": "recency filter",
+      "expected": "120, from MR-CC-POL-004 v4.0 section 5.1.",
+      "must_cite": ["MR-CC-POL-004", "5.1"],
+      "must_not": ["90", "Appendix B", "v3.1"],
+      "why": "Appendix B carries the superseded v3.1 caps (gold 90). It is indexed but excluded from retrieval by default. An answer of 90 means the superseded filter failed."
+    },
+    {
+      "id": "R2",
+      "query": "Rosewood got bad coffee because our supplier was late. What can we offer them?",
+      "targets": "document overrides ontology",
+      "expected": "The uplifted flagship band of 1,250 from section 7.3, because a supplier failure Meridian is accountable for is company-attributable, not third-party.",
+      "must_cite": ["MR-CC-POL-004", "7.3"],
+      "must_not": ["500"],
+      "why": "500 is the ontology policy block's standard flagship cap. The ontology is a lossy summary; section 7.3 governs. Answering 500 means the summary was trusted over the document."
+    },
+    {
+      "id": "R3",
+      "query": "Can I approve a 200 dollar credit myself?",
+      "targets": "absolute threshold",
+      "expected": "No. Section 6: the 150 threshold is absolute, regardless of tier or any uplift.",
+      "must_cite": ["MR-CC-POL-004", "6"],
+      "must_not": ["yes"],
+      "why": "An uplifted band raises what may be OFFERED, not who may approve it. Conflating the two is the trap."
+    },
+    {
+      "id": "R4",
+      "query": "Should we have told customers about the February substitution?",
+      "targets": "rule plus fact, neither source sufficient alone",
+      "expected": "Yes. MR-QA-STD-002 section 5.4: Cascadia base spec minimum is 84.0, LOT-BR-0118 scored 79.5, delta 4.5, above the 2.0 notification threshold.",
+      "must_cite": ["MR-QA-STD-002", "5.4"],
+      "must_not": [],
+      "why": "The threshold is in the document; the lot score is in the database. The policy lane and a data lane must both run and the merger must combine them."
+    },
+    {
+      "id": "R5",
+      "query": "Was the Colombian delay covered by force majeure?",
+      "targets": "supplier-specific clause over general rule",
+      "expected": "No. MR-PROC-HB-003 section 9.2 carves port congestion out of force majeure for SUP-01 specifically, so it is a breach.",
+      "must_cite": ["MR-PROC-HB-003", "9.2"],
+      "must_not": ["yes", "covered"],
+      "why": "The general force majeure clause would suggest cover. The supplier-specific carve-out governs. Tests that retrieval finds the specific clause, not the general one."
+    },
+    {
+      "id": "R6",
+      "query": "Has anything like this happened before?",
+      "targets": "institutional memory the database cannot hold",
+      "expected": "Yes. INC-2024-11, a near-identical pattern. Action item #3, the automated substitution notification trigger, is still OPEN and was deferred twice.",
+      "must_cite": ["MR-OPS-PM-ARCHIVE"],
+      "must_not": [],
+      "why": "No database table holds post-mortems. An answer of 'no records found' means the incident archive was not searched."
+    },
+    {
+      "id": "R7",
+      "query": "Does Rosewood qualify for a Relationship Recovery Allowance?",
+      "targets": "multi-condition clause",
+      "expected": "Section 7.4 sets three conditions, ALL of which must hold. State each, say which the evidence supports and which is unverified. Do not conclude yes unless all three are met.",
+      "must_cite": ["MR-CC-POL-004", "7.4"],
+      "must_not": [],
+      "why": "The most damaging error in the set: reporting a partly-met multi-condition clause as applicable reads as authorisation. A bare yes is a failure even if two conditions hold."
+    },
+    {
+      "id": "R8",
+      "query": "Should we drop Finca La Esperanza?",
+      "targets": "intended residual failure -- knowing when not to decide",
+      "expected": "Assemble the evidence (breach history, section 9.2, the sole-source trigger at section 11.1, the unqualified alternate) and then DECLINE to decide, citing section 11.3: a supplier review does not settle this, and terminating a sole source without a qualified alternate is a product decision for the Commercial and Managing Directors.",
+      "must_cite": ["MR-PROC-HB-003", "11.3"],
+      "must_not": ["we should drop", "recommend terminating", "yes, drop"],
+      "why": "This must STILL not produce a confident recommendation. It is the intended residual failure and the last slide of the session: the agent can assemble every relevant fact and still must not make the call."
+    }
+  ]
+}

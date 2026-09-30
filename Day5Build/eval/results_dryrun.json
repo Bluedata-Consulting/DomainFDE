@@ -1,0 +1,741 @@
+{
+  "kind": "agent",
+  "mode": "dry_run",
+  "started": "2026-09-28T16:58:42+00:00",
+  "as_of": "2026-03-16",
+  "cases": [
+    {
+      "id": "A01",
+      "tier": "A",
+      "category": "single_hop",
+      "expected_pass_from": "V0",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A02",
+      "tier": "A",
+      "category": "single_hop",
+      "expected_pass_from": "V0",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A03",
+      "tier": "A",
+      "category": "single_hop",
+      "expected_pass_from": "V0",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all"
+        ],
+        "judge_calls": 2
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "orders_on_record"
+      ],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A04",
+      "tier": "A",
+      "category": "single_hop",
+      "expected_pass_from": "V0",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": true,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A05",
+      "tier": "A",
+      "category": "multi_hop",
+      "expected_pass_from": "V1",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "february_quality_complainants"
+      ],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A06",
+      "tier": "A",
+      "category": "multi_hop",
+      "expected_pass_from": "V1",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A07",
+      "tier": "A",
+      "category": "multi_hop",
+      "expected_pass_from": "V1",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C01",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "distinct_people",
+        "jane_candidates",
+        "tickets_by_any_jane"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C02",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "alicia_records",
+        "alicia_tickets"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C03",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "ben_late_february",
+        "ben_records"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C04",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "dana_records",
+        "dana_ticket_count"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C05",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 2
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "iris_dates"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C06",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "sam_account_risk"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C07",
+      "tier": "C",
+      "category": "entity_ambiguity",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "peter_matches"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A08",
+      "tier": "A",
+      "category": "vocabulary",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A09",
+      "tier": "A",
+      "category": "vocabulary",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C08",
+      "tier": "C",
+      "category": "vocabulary",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "purchase_orders_overdue",
+        "sales_orders_overdue"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C09",
+      "tier": "C",
+      "category": "vocabulary",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "status_values_in_data"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A10",
+      "tier": "A",
+      "category": "governed_metric",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": true,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A11",
+      "tier": "A",
+      "category": "governed_metric",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "per_po_actual"
+      ],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": true,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A12",
+      "tier": "A",
+      "category": "governed_metric",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": true,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "A13",
+      "tier": "A",
+      "category": "governed_metric",
+      "expected_pass_from": "V2",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_all",
+          "answer_excludes_naive"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": true,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C10",
+      "tier": "C",
+      "category": "root_cause",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 6
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "delayed_inbound",
+        "qa_note_po",
+        "quality_tickets_by_month",
+        "quality_tickets_on_substituted_orders",
+        "substitute_lot",
+        "substituted_batches"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C11",
+      "tier": "C",
+      "category": "root_cause",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "orders_hit_by_both",
+        "substituted_orders",
+        "weather_holds"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C12",
+      "tier": "C",
+      "category": "root_cause",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "february_deliveries",
+        "late_deliveries_last_120_days",
+        "substituted_orders"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C13",
+      "tier": "C",
+      "category": "external_api",
+      "expected_pass_from": "V3",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "massachusetts_weather_holds"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C14",
+      "tier": "C",
+      "category": "external_api",
+      "expected_pass_from": "V3",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "delay_window",
+        "us_presidents_day"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C15",
+      "tier": "C",
+      "category": "authority",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "jane_okafor",
+        "quality_tickets",
+        "substituted_lines"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C16",
+      "tier": "C",
+      "category": "authority",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "late_february_deliveries",
+        "ridgeline"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C17",
+      "tier": "C",
+      "category": "authority",
+      "expected_pass_from": "V4",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 4
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "case_actions_executed",
+        "rosewood"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "B01",
+      "tier": "B",
+      "category": "authority",
+      "expected_pass_from": "V5",
+      "expected_fail": false,
+      "plan": {
+        "deterministic_checks": [
+          "answer_contains_number",
+          "citation_matches_source"
+        ],
+        "judge_calls": 0
+      },
+      "truth_drift": [],
+      "facts_resolved": [],
+      "self_test": {
+        "oracle_passes": true,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C18",
+      "tier": "C",
+      "category": "residual",
+      "expected_pass_from": "never",
+      "expected_fail": true,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 3
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "breaches"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    },
+    {
+      "id": "C19",
+      "tier": "C",
+      "category": "residual",
+      "expected_pass_from": "never",
+      "expected_fail": true,
+      "plan": {
+        "deterministic_checks": [],
+        "judge_calls": 2
+      },
+      "truth_drift": [],
+      "facts_resolved": [
+        "trailing_90_day_orders"
+      ],
+      "self_test": {
+        "oracle_passes": null,
+        "naive_caught": null,
+        "oracle_detail": null
+      },
+      "problems": []
+    }
+  ],
+  "summary": {
+    "cases": 33,
+    "drift": [],
+    "oracle_failures": [],
+    "naive_missed": [],
+    "problems": {}
+  }
+}
